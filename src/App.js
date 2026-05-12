@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { Analytics } from '@vercel/analytics/dist/react/index.js';
 import './App.css';
 
 function useInView(threshold = 0.15) {
@@ -510,6 +511,7 @@ export default function App() {
         </div>
       </main>
       <Footer />
+      <Analytics />
     </div>
   );
 }
