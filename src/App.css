@@ -906,6 +906,270 @@
   padding-top: 20px;
 }
 
+/* ─── Copy Email Button ────────────────────────────────── */
+
+.copy-email-btn {
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--accent-border);
+  padding: 0 0 2px;
+  margin: 0;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+  line-height: inherit;
+  transition: border-color 0.2s ease;
+}
+
+.copy-email-btn:hover {
+  border-color: var(--accent);
+}
+
+/* ─── Hero Status ──────────────────────────────────────── */
+
+.hero-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.hero-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #4ade80;
+  flex-shrink: 0;
+  animation: pulse-dot 2.2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.5); }
+  50% { opacity: 0.85; box-shadow: 0 0 0 5px rgba(74, 222, 128, 0); }
+}
+
+.hero-status-text {
+  color: #4ade80 !important;
+  font-size: 10px;
+}
+
+/* ─── Hero CV Button ───────────────────────────────────── */
+
+.hero-cv-btn {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+  text-decoration: none;
+  padding: 5px 13px;
+  border: 1px solid var(--accent-border);
+  border-radius: 3px;
+  background: var(--accent-dim);
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.hero-cv-btn:hover {
+  background: rgba(196, 146, 58, 0.2);
+  border-color: var(--accent);
+}
+
+/* ─── Back To Top ──────────────────────────────────────── */
+
+.back-to-top {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--surface-2);
+  border: 1px solid var(--border-light);
+  color: var(--text-muted);
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 90;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease, border-color 0.2s ease, color 0.2s ease;
+  pointer-events: none;
+}
+
+.back-to-top--visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.back-to-top:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ─── Hero Stats Polish ────────────────────────────────── */
+
+.hero-stat {
+  border-top: 2px solid var(--accent-border);
+}
+
+.hero-stat-value {
+  font-size: 26px;
+}
+
+/* ─── Experience Timeline ──────────────────────────────── */
+
+.exp-list {
+  padding-left: 28px;
+  border-left: 1px solid var(--border);
+}
+
+.exp-item {
+  position: relative;
+}
+
+.exp-item::before {
+  content: '';
+  position: absolute;
+  left: -32px;
+  top: 40px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--bg);
+  box-shadow: 0 0 0 1px var(--border);
+}
+
+/* ─── Skills Core / Familiar ───────────────────────────── */
+
+.skill-item--core {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.skill-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 6px 0;
+}
+
+/* ─── Project Card Meta ────────────────────────────────── */
+
+.project-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.project-highlight {
+  margin-bottom: 0;
+}
+
+.project-status-badge {
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 3px;
+  letter-spacing: 0.06em;
+}
+
+.project-status-badge--live {
+  background: rgba(74, 222, 128, 0.1);
+  color: #4ade80;
+  border: 1px solid rgba(74, 222, 128, 0.25);
+}
+
+.project-status-badge--npm {
+  background: var(--accent-dim);
+  color: var(--accent);
+  border: 1px solid var(--accent-border);
+}
+
+.project-status-badge--wip {
+  background: var(--surface-2);
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+}
+
+/* ─── Articles ─────────────────────────────────────────── */
+
+.articles-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+}
+
+.article-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 32px;
+  text-decoration: none;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.article-card--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.article-card:hover {
+  background: var(--surface-2);
+  border-color: var(--border-light);
+}
+
+.article-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.article-tag {
+  font-size: 10px;
+  color: var(--accent);
+  background: var(--accent-dim);
+  border: 1px solid var(--accent-border);
+  padding: 3px 8px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+.article-meta {
+  font-size: 10px;
+  color: var(--text-dim);
+}
+
+.article-title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--text);
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+.article-excerpt {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text-muted);
+  flex: 1;
+}
+
+.article-read-more {
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+}
+
 /* ─── Responsive ───────────────────────────────────────── */
 
 @media (max-width: 900px) {
@@ -1014,6 +1278,30 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 28px;
+  }
+
+  .articles-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .nav-cta--resume {
+    display: none;
+  }
+
+  .exp-list {
+    padding-left: 16px;
+  }
+
+  .exp-item::before {
+    left: -20px;
+  }
+
+  .back-to-top {
+    bottom: 20px;
+    right: 20px;
+    width: 38px;
+    height: 38px;
+    font-size: 16px;
   }
 }
 

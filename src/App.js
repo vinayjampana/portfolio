@@ -1,6 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './App.css';
 
+// Set to false when not actively seeking roles
+const OPEN_TO_ROLES = true;
+
 function useInView(threshold = 0.15) {
   const ref = useRef(null);
   const [inView, setInView] = useState(false);
@@ -19,6 +22,38 @@ function useInView(threshold = 0.15) {
     return () => obs.disconnect();
   }, [threshold]);
   return [ref, inView];
+}
+
+function CopyEmailButton() {
+  const [copied, setCopied] = useState(false);
+  const copy = () => {
+    navigator.clipboard.writeText('vinayvarma541@gmail.com').catch(() => {});
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+  return (
+    <button onClick={copy} className="copy-email-btn">
+      {copied ? 'Copied!' : 'vinayvarma541@gmail.com'}
+    </button>
+  );
+}
+
+function BackToTop() {
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setVisible(window.scrollY > 600);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+  return (
+    <button
+      className={`back-to-top ${visible ? 'back-to-top--visible' : ''}`}
+      onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+      aria-label="Back to top"
+    >
+      ↑
+    </button>
+  );
 }
 
 const EXPERIENCE = [
@@ -82,6 +117,8 @@ const FOCUS_AREAS = [
   },
 ];
 
+const STATUS_LABEL = { live: 'Live', npm: 'npm', wip: 'In Progress' };
+
 const PROJECTS = [
   {
     name: 'vite-plugin-bundle-size-tracker',
@@ -97,6 +134,7 @@ const PROJECTS = [
     tags: ['TypeScript', 'Vite Plugin API', 'Node.js'],
     links: { npm: 'https://www.npmjs.com/package/vite-plugin-bundle-size-tracker', repo: 'https://github.com/vinayjampana/vite-plugin-bundle-size-tracker' },
     highlight: 'npm published',
+    status: 'npm',
   },
   {
     name: 'Tiny Tracker',
@@ -112,6 +150,7 @@ const PROJECTS = [
     tags: ['Next.js', 'TypeScript', 'Firebase', 'Tailwind', 'Shadcn/ui'],
     links: { live: 'https://tinytracker.in', repo: 'https://github.com/vinayjampana/habit-and-routine-tracker' },
     highlight: 'live',
+    status: 'live',
   },
   {
     name: 'RoleMiner',
@@ -128,16 +167,37 @@ const PROJECTS = [
     tags: ['Python', 'FastAPI', 'SQLite', 'scikit-learn', 'LLM APIs', 'React', 'Docker'],
     links: { repo: 'https://github.com/vinayjampana/role-miner' },
     highlight: 'gen ai + full-stack',
+    status: 'wip',
+  },
+];
+
+// Update article URLs and titles with real Medium links once published
+const ARTICLES = [
+  {
+    title: 'Building Micro-frontends with Webpack 5 Module Federation',
+    excerpt: 'How we decomposed a monolithic React app into 6 independently deployable micro-frontends, shared RTK Store and i18n as singletons, and kept CI pipelines free of version conflicts.',
+    readTime: '8 min read',
+    date: 'Jan 2024',
+    url: 'https://medium.com/@vinayjampana',
+    tag: 'Architecture',
+  },
+  {
+    title: 'From 30s to 1.5s: A Frontend Performance Overhaul',
+    excerpt: 'A systematic breakdown of a slow enterprise SaaS app — custom Nx executors, route-level code splitting, vendor chunk strategy, and browser cache policies that held in production.',
+    readTime: '6 min read',
+    date: 'Mar 2024',
+    url: 'https://medium.com/@vinayjampana',
+    tag: 'Performance',
   },
 ];
 
 const SKILLS = [
-  { category: 'Frontend', items: ['React 18/19', 'TypeScript', 'Next.js', 'Redux Toolkit', 'Context API'] },
-  { category: 'Backend', items: ['NestJS', 'Node.js', 'PostgreSQL', 'REST APIs', 'JWT / Token Auth'] },
-  { category: 'Architecture', items: ['Nx Monorepo', 'Module Federation', 'Micro-frontends', 'Event-driven Systems', 'Modular Frontends'] },
-  { category: 'GenAI', items: ['OpenAI-compatible APIs', 'Structured Outputs', 'Prompt Design', 'LLM Batch Scoring', 'TF-IDF Pre-ranking'] },
-  { category: 'Quality', items: ['Vitest', 'Jest', 'API E2E', 'Coverage Thresholds', 'CI Budget Gates'] },
-  { category: 'DevOps', items: ['GitHub Actions', 'CI/CD', 'Docker Compose', 'Vercel', 'Preview Deployments'] },
+  { category: 'Frontend', core: ['React 18/19', 'TypeScript', 'Next.js'], familiar: ['Redux Toolkit', 'Context API'] },
+  { category: 'Backend', core: ['NestJS', 'Node.js', 'PostgreSQL'], familiar: ['REST APIs', 'JWT / Token Auth'] },
+  { category: 'Architecture', core: ['Nx Monorepo', 'Module Federation', 'Micro-frontends'], familiar: ['Event-driven Systems', 'Modular Frontends'] },
+  { category: 'GenAI', core: ['OpenAI-compatible APIs', 'Structured Outputs', 'Prompt Design'], familiar: ['LLM Batch Scoring', 'TF-IDF Pre-ranking'] },
+  { category: 'Quality', core: ['Vitest', 'Jest', 'API E2E'], familiar: ['Coverage Thresholds', 'CI Budget Gates'] },
+  { category: 'DevOps', core: ['GitHub Actions', 'CI/CD', 'Docker Compose'], familiar: ['Vercel', 'Preview Deployments'] },
 ];
 
 function Nav() {
@@ -157,6 +217,10 @@ function Nav() {
         <a href="#projects">Projects</a>
         <a href="#education">Education</a>
         <a href="#skills">Skills</a>
+        {/* Place your resume at public/resume.pdf */}
+        <a href="/resume.pdf" download className="nav-cta nav-cta--resume">
+          Download CV
+        </a>
         <a
           href="https://linkedin.com/in/vinay-jampana"
           target="_blank"
@@ -182,6 +246,12 @@ function Hero() {
             <span className="mono-label">Available | Hyderabad / Bangalore / Remote</span>
           </div>
           <h1 className="hero-name">Vinay<br /><em>Jampana</em></h1>
+          {OPEN_TO_ROLES && (
+            <div className="hero-status">
+              <span className="hero-status-dot" aria-hidden="true" />
+              <span className="mono-label hero-status-text">Open to Senior Frontend / SDE2–SDE3 roles</span>
+            </div>
+          )}
           <p className="hero-title">Senior Software Engineer | Frontend + Backend + GenAI</p>
           <p className="hero-bio">
             Senior engineer with 5+ years building enterprise multi-tenant SaaS end-to-end:
@@ -189,9 +259,7 @@ function Hero() {
             RBAC systems, and focused GenAI workflows where LLMs add measurable leverage.
           </p>
           <div className="hero-links">
-            <a href="mailto:vinayvarma541@gmail.com" className="hero-link hero-link--primary">
-              vinayvarma541@gmail.com
-            </a>
+            <CopyEmailButton />
             <a href="https://linkedin.com/in/vinay-jampana" target="_blank" rel="noopener noreferrer" className="hero-link">
               LinkedIn
             </a>
@@ -200,6 +268,10 @@ function Hero() {
             </a>
             <a href="https://medium.com/@vinayjampana" target="_blank" rel="noopener noreferrer" className="hero-link">
               Medium
+            </a>
+            {/* Place your resume at public/resume.pdf */}
+            <a href="/resume.pdf" download className="hero-cv-btn">
+              Download CV ↓
             </a>
           </div>
         </div>
@@ -357,24 +429,31 @@ function ProjectCard({ project, index }) {
     >
       <div className="project-card-top">
         <div>
-          <div className="project-highlight mono-label">{project.highlight}</div>
+          <div className="project-card-meta">
+            <div className="project-highlight mono-label">{project.highlight}</div>
+            {project.status && (
+              <span className={`project-status-badge project-status-badge--${project.status} mono-label`}>
+                {STATUS_LABEL[project.status]}
+              </span>
+            )}
+          </div>
           <h3 className="project-name">{project.name}</h3>
           <p className="project-tagline">{project.tagline}</p>
         </div>
         <div className="project-links">
           {project.links.live && (
             <a href={project.links.live} target="_blank" rel="noopener noreferrer" className="project-link">
-              Live
+              ↗ Live
             </a>
           )}
           {project.links.npm && (
             <a href={project.links.npm} target="_blank" rel="noopener noreferrer" className="project-link">
-              npm
+              ↗ npm
             </a>
           )}
           {project.links.repo && (
             <a href={project.links.repo} target="_blank" rel="noopener noreferrer" className="project-link project-link--muted">
-              Repo
+              GitHub
             </a>
           )}
         </div>
@@ -409,17 +488,54 @@ function Projects() {
   );
 }
 
+function ArticleCard({ article, index }) {
+  const [ref, inView] = useInView(0.1);
+  return (
+    <a
+      ref={ref}
+      href={article.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`article-card ${inView ? 'article-card--visible' : ''}`}
+      style={{ transitionDelay: `${index * 80}ms` }}
+    >
+      <div className="article-card-top">
+        <span className="article-tag mono-label">{article.tag}</span>
+        <span className="article-meta mono-label">{article.date} · {article.readTime}</span>
+      </div>
+      <h3 className="article-title">{article.title}</h3>
+      <p className="article-excerpt">{article.excerpt}</p>
+      <span className="article-read-more mono-label">Read on Medium →</span>
+    </a>
+  );
+}
+
+function Articles() {
+  const [ref, inView] = useInView(0.05);
+  return (
+    <section id="articles" className="section" ref={ref}>
+      <div className={`section-header ${inView ? 'section-header--visible' : ''}`}>
+        <SectionLabel number={4}>Writing</SectionLabel>
+        <div className="section-rule" />
+      </div>
+      <div className="articles-grid">
+        {ARTICLES.map((a, i) => (
+          <ArticleCard key={a.title} article={a} index={i} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function Education() {
   const [ref, inView] = useInView(0.1);
   return (
     <section id="education" className="section" ref={ref}>
       <div className={`section-header ${inView ? 'section-header--visible' : ''}`}>
-        <SectionLabel number={4}>Education</SectionLabel>
+        <SectionLabel number={5}>Education</SectionLabel>
         <div className="section-rule" />
       </div>
-      <div
-        className={`edu-card ${inView ? 'edu-card--visible' : ''}`}
-      >
+      <div className={`edu-card ${inView ? 'edu-card--visible' : ''}`}>
         <div className="edu-main">
           <div className="edu-left">
             <h3 className="edu-institution">BITS Pilani</h3>
@@ -447,7 +563,11 @@ function SkillGroup({ group, index, parentInView }) {
     <div className={`skill-group ${visible ? 'skill-group--visible' : ''}`}>
       <h4 className="skill-category mono-label">{group.category}</h4>
       <div className="skill-items">
-        {group.items.map(item => (
+        {group.core.map(item => (
+          <span key={item} className="skill-item skill-item--core">{item}</span>
+        ))}
+        <div className="skill-divider" />
+        {group.familiar.map(item => (
           <span key={item} className="skill-item">{item}</span>
         ))}
       </div>
@@ -460,7 +580,7 @@ function Skills() {
   return (
     <section id="skills" className="section" ref={ref}>
       <div className={`section-header ${inView ? 'section-header--visible' : ''}`}>
-        <SectionLabel number={5}>Technical Skills</SectionLabel>
+        <SectionLabel number={6}>Technical Skills</SectionLabel>
         <div className="section-rule" />
       </div>
       <div className="skills-grid">
@@ -505,11 +625,13 @@ export default function App() {
           <Focus />
           <Experience />
           <Projects />
+          <Articles />
           <Education />
           <Skills />
         </div>
       </main>
       <Footer />
+      <BackToTop />
     </div>
   );
 }
