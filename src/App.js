@@ -315,7 +315,7 @@ function FocusCard({ area, index }) {
       style={{ transitionDelay: `${index * 90}ms` }}
     >
       <div className="focus-card-top">
-        <span className="focus-weight">{area.weight}</span>
+        // <span className="focus-weight">{area.weight}</span>
         <span className="focus-label mono-label">{area.label}</span>
       </div>
       <h3 className="focus-title">{area.title}</h3>
