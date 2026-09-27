@@ -1,8 +1,49 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './App.css';
+import {
+  PROFILE, EXPERIENCE, PROJECTS, SKILLS, CASE_STUDIES, CONFIDENTIAL_NOTE,
+  HERO_STATS, FOCUS, PRINCIPLES, PLATFORM,
+} from './content';
 
-// Set to false when not actively seeking roles
 const OPEN_TO_ROLES = true;
+const SITE_TITLE = `${PROFILE.name} - Senior Software Engineer, AI and Full-Stack`;
+
+/* ─── tiny router: pathname + hash, no dependency ───────── */
+
+const currentLocation = () => window.location.pathname.replace(/\/+$/, '') + window.location.hash;
+
+function useLocation() {
+  const [loc, setLoc] = useState(currentLocation);
+  useEffect(() => {
+    const onChange = () => setLoc(currentLocation());
+    window.addEventListener('popstate', onChange);
+    return () => window.removeEventListener('popstate', onChange);
+  }, []);
+  return loc;
+}
+
+function navigate(to) {
+  window.history.pushState({}, '', to);
+  window.dispatchEvent(new PopStateEvent('popstate'));
+}
+
+const Link = React.forwardRef(({ to, children, ...rest }, ref) => {
+  const onClick = e => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+    e.preventDefault();
+    navigate(to);
+  };
+  return <a ref={ref} href={to} onClick={onClick} {...rest}>{children}</a>;
+});
+
+const inline = text =>
+  text.split(/(`[^`]+`)/g).map((part, i) =>
+    part.startsWith('`') && part.endsWith('`') && part.length > 1
+      ? <code key={i}>{part.slice(1, -1)}</code>
+      : part
+  );
+
+/* ─── shared bits ───────────────────────────────────────── */
 
 function useInView(threshold = 0.15) {
   const ref = useRef(null);
@@ -27,13 +68,13 @@ function useInView(threshold = 0.15) {
 function CopyEmailButton() {
   const [copied, setCopied] = useState(false);
   const copy = () => {
-    navigator.clipboard.writeText('vinayvarma541@gmail.com').catch(() => {});
+    navigator.clipboard.writeText(PROFILE.email).catch(() => {});
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
   return (
     <button onClick={copy} className="copy-email-btn">
-      {copied ? 'Copied!' : 'vinayvarma541@gmail.com'}
+      {copied ? 'Copied!' : PROFILE.email}
     </button>
   );
 }
@@ -56,149 +97,28 @@ function BackToTop() {
   );
 }
 
-const EXPERIENCE = [
-  {
-    company: 'Zotok.ai',
-    role: 'Senior Software Engineer / Frontend Lead',
-    period: 'May 2023 - Present',
-    location: 'Hyderabad',
-    note: 'B2B SaaS | WhatsApp Business Platform | Sun Pharma | UltraTech | J&J | Samunnati',
-    bullets: [
-      'Built and owned real-time communication across service and UI layers: NestJS APIs, PubNub/Centrifuge integration, channel lifecycle modeling, token-based authorization, and responsive React messaging for 2,000+ channels per account.',
-      'Designed workspace-level RBAC end-to-end: PostgreSQL role and permission schema, NestJS guard/middleware pipeline, token-embedded permission resolution, and frontend enforcement for enterprise customer workspaces.',
-      'Architected Webpack 5 Module Federation across 6 remote micro-frontends and a shell host; configured singleton shared dependencies for RTK Store, i18n, and realtime SDKs to avoid duplicate bundle loading and runtime version conflicts.',
-      'Led frontend performance overhaul: custom Nx executor, production-mode enforcement, route and remote lazy loading, vendor chunk splitting, and browser cache policy; reduced initial load from 15-30s to about 1.5s.',
-      'Promoted to Lead within the first year; built a 5-engineer team, owned hiring for 3 positions, ran architecture reviews, and shipped a 40+ component React + TypeScript design system across 9 micro-apps.',
-    ],
-    tags: ['React', 'TypeScript', 'NestJS', 'PostgreSQL', 'Module Federation', 'Nx', 'Realtime Systems'],
-  },
-  {
-    company: 'Sumeru Software',
-    role: 'Senior Developer',
-    period: 'Aug 2022 - Jan 2023',
-    location: 'Bengaluru',
-    note: '',
-    bullets: [
-      'Built a role-based CRM from scratch with React, Redux Toolkit, and Node.js; designed modular dashboard architecture with permission-based rendering and state isolation, then shipped the MVP in 4 months with a 4-member team.',
-    ],
-    tags: ['React', 'Redux Toolkit', 'Node.js'],
-  },
-  {
-    company: 'Aerchain',
-    role: 'SDE 1 / Intern',
-    period: 'Jul 2019 - Jan 2022',
-    location: 'Bengaluru',
-    note: 'B2B SaaS | Procurement tech',
-    bullets: [
-      'Joined as intern and converted to SDE1 after taking ownership of complex modules, including real-time auctions with optimistic UI and server reconciliation, plus barcode-based inventory flows with offline PWA support.',
-    ],
-    tags: ['React', 'PWA', 'Service Workers'],
-  },
-];
+function SectionLabel({ number, children }) {
+  return (
+    <div className="section-label">
+      <span className="section-label-num mono-label">{String(number).padStart(2, '0')}</span>
+      <span className="section-label-text">{children}</span>
+    </div>
+  );
+}
 
-const FOCUS_AREAS = [
-  {
-    label: 'Frontend Systems',
-    weight: '40%',
-    title: 'Micro-frontends, design systems, performance',
-    copy: 'React and TypeScript architecture for multi-tenant SaaS: Module Federation, Nx libraries, shared state boundaries, design systems, and bundle budgets that keep product teams moving without degrading UX.',
-  },
-  {
-    label: 'Backend Engineering',
-    weight: '40%',
-    title: 'APIs, permissions, realtime infrastructure',
-    copy: 'Service ownership across NestJS, Node.js, PostgreSQL, REST contracts, token-based auth, event routing, and realtime communication systems that support enterprise-grade workspace behavior.',
-  },
-  {
-    label: 'GenAI Engineering',
-    weight: '20%',
-    title: 'LLM-assisted workflows with cost controls',
-    copy: 'Pragmatic AI integration: structured scoring, prompt design, OpenAI-compatible APIs, TF-IDF pre-ranking, batch evaluation, and dashboards that expose model decisions instead of hiding them.',
-  },
-];
-
-const STATUS_LABEL = { live: 'Live', npm: 'npm', wip: 'In Progress' };
-
-const PROJECTS = [
-  {
-    name: 'vite-plugin-bundle-size-tracker',
-    tagline: 'Published npm Package',
-    description: 'Tracks and compares Vite bundle sizes across builds, then warns before regressions ship. Built after reducing a 9MB JS bundle to 5MB at Zotok.ai so Vite teams can enforce bundle budgets without custom CI scripts.',
-    points: [
-      'Tracks bundle size history across N builds',
-      'Compares current build against rolling average',
-      'Configurable threshold alerts, warns at +10% by default',
-      'JSON report output for CI/CD pipelines',
-      'Zero config, works out of the box',
-    ],
-    tags: ['TypeScript', 'Vite Plugin API', 'Node.js'],
-    links: { npm: 'https://www.npmjs.com/package/vite-plugin-bundle-size-tracker', repo: 'https://github.com/vinayjampana/vite-plugin-bundle-size-tracker' },
-    highlight: 'npm published',
-    status: 'npm',
-  },
-  {
-    name: 'Tiny Tracker',
-    tagline: 'tinytracker.in',
-    description: 'Minimalist daily habit and routine tracker with a clean Today view, habit streaks, visual progress heatmap, and offline-capable PWA support.',
-    points: [
-      'Next.js 16 App Router + React 19',
-      'Firebase Auth (Email + Google) + Firestore',
-      'Per-user data isolation via Firebase Security Rules',
-      'PWA, installable and offline-capable',
-      'IST timezone, built for Indian users',
-    ],
-    tags: ['Next.js', 'TypeScript', 'Firebase', 'Tailwind', 'Shadcn/ui'],
-    links: { live: 'https://tinytracker.in', repo: 'https://github.com/vinayjampana/habit-and-routine-tracker' },
-    highlight: 'live',
-    status: 'live',
-  },
-  {
-    name: 'RoleMiner',
-    tagline: 'GenAI Job Discovery Pipeline',
-    description: 'India-first job discovery system that scrapes multiple ATS sources, filters and ranks roles locally, then uses one LLM batch call for structured fit scoring and reasoning.',
-    points: [
-      'Python 3.11 + FastAPI + SQLite, async HTTPX scrapers for 5 ATS types',
-      'Pipeline: rule filter -> TF-IDF cosine rank -> LLM batch score',
-      'SSE /stream/{run_id}: live events while running, DB replay for finished runs',
-      'React 18 + Vite + TypeScript + React Query dashboard',
-      'OpenAI-compatible model interface with structured output parsing',
-      'Cost: less than $0.002 per run',
-    ],
-    tags: ['Python', 'FastAPI', 'SQLite', 'scikit-learn', 'LLM APIs', 'React', 'Docker'],
-    links: { repo: 'https://github.com/vinayjampana/role-miner' },
-    highlight: 'gen ai + full-stack',
-    status: 'wip',
-  },
-];
-
-// Update article URLs and titles with real Medium links once published
-const ARTICLES = [
-  {
-    title: 'Building Micro-frontends with Webpack 5 Module Federation',
-    excerpt: 'How we decomposed a monolithic React app into 6 independently deployable micro-frontends, shared RTK Store and i18n as singletons, and kept CI pipelines free of version conflicts.',
-    readTime: '8 min read',
-    date: 'Jan 2024',
-    url: 'https://medium.com/@vinayjampana',
-    tag: 'Architecture',
-  },
-  {
-    title: 'From 30s to 1.5s: A Frontend Performance Overhaul',
-    excerpt: 'A systematic breakdown of a slow enterprise SaaS app — custom Nx executors, route-level code splitting, vendor chunk strategy, and browser cache policies that held in production.',
-    readTime: '6 min read',
-    date: 'Mar 2024',
-    url: 'https://medium.com/@vinayjampana',
-    tag: 'Performance',
-  },
-];
-
-const SKILLS = [
-  { category: 'Frontend', core: ['React 18/19', 'TypeScript', 'Next.js'], familiar: ['Redux Toolkit', 'Context API'] },
-  { category: 'Backend', core: ['NestJS', 'Node.js', 'PostgreSQL'], familiar: ['REST APIs', 'JWT / Token Auth'] },
-  { category: 'Architecture', core: ['Nx Monorepo', 'Module Federation', 'Micro-frontends'], familiar: ['Event-driven Systems', 'Modular Frontends'] },
-  { category: 'GenAI', core: ['OpenAI-compatible APIs', 'Structured Outputs', 'Prompt Design'], familiar: ['LLM Batch Scoring', 'TF-IDF Pre-ranking'] },
-  { category: 'Quality', core: ['Vitest', 'Jest', 'API E2E'], familiar: ['Coverage Thresholds', 'CI Budget Gates'] },
-  { category: 'DevOps', core: ['GitHub Actions', 'CI/CD', 'Docker Compose'], familiar: ['Vercel', 'Preview Deployments'] },
-];
+function Section({ id, number, label, intro, children }) {
+  const [ref, inView] = useInView(0.05);
+  return (
+    <section id={id} className="section" ref={ref}>
+      <div className={`section-header ${inView ? 'section-header--visible' : ''}`}>
+        <SectionLabel number={number}>{label}</SectionLabel>
+        <div className="section-rule" />
+      </div>
+      {intro && <div className="focus-intro"><p>{intro}</p></div>}
+      {children}
+    </section>
+  );
+}
 
 function Nav() {
   const [scrolled, setScrolled] = useState(false);
@@ -210,29 +130,21 @@ function Nav() {
 
   return (
     <nav className={`nav ${scrolled ? 'nav--scrolled' : ''}`}>
-      <span className="nav-logo">VJ</span>
+      <Link to="/" className="nav-logo">VJ</Link>
       <div className="nav-links">
-        <a href="#focus">Focus</a>
-        <a href="#experience">Experience</a>
-        <a href="#projects">Projects</a>
-        <a href="#education">Education</a>
-        <a href="#skills">Skills</a>
-        {/* Place your resume at public/resume.pdf */}
-        <a href="/resume.pdf" download className="nav-cta nav-cta--resume">
-          Download CV
-        </a>
-        <a
-          href="https://linkedin.com/in/vinay-jampana"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="nav-cta"
-        >
-          LinkedIn
-        </a>
+        <Link to="/#focus">Focus</Link>
+        <Link to="/#work">Work</Link>
+        <Link to="/#experience">Experience</Link>
+        <Link to="/#platform">Systems</Link>
+        <Link to="/#skills">Skills</Link>
+        <a href="/resume.pdf" download className="nav-cta nav-cta--resume">Download CV</a>
+        <a href={PROFILE.linkedin} target="_blank" rel="noopener noreferrer" className="nav-cta">LinkedIn</a>
       </div>
     </nav>
   );
 }
+
+/* ─── home ──────────────────────────────────────────────── */
 
 function Hero() {
   const [mounted, setMounted] = useState(false);
@@ -249,84 +161,79 @@ function Hero() {
           {OPEN_TO_ROLES && (
             <div className="hero-status">
               <span className="hero-status-dot" aria-hidden="true" />
-              <span className="mono-label hero-status-text">Open to Senior Frontend / SDE2–SDE3 roles</span>
+              <span className="mono-label hero-status-text">Open to Senior AI / Full-Stack roles</span>
             </div>
           )}
-          <p className="hero-title">Senior Software Engineer | Frontend + Backend + GenAI</p>
-          <p className="hero-bio">
-            Senior engineer with 5+ years building enterprise multi-tenant SaaS end-to-end:
-            React and TypeScript frontends, NestJS and PostgreSQL services, realtime messaging,
-            RBAC systems, and focused GenAI workflows where LLMs add measurable leverage.
-          </p>
+          <p className="hero-title">Senior Software Engineer | AI + Full-Stack</p>
+          <p className="hero-bio">{PROFILE.intro[0]}</p>
+          <p className="hero-bio hero-bio--second">{PROFILE.intro[1]}</p>
           <div className="hero-links">
             <CopyEmailButton />
-            <a href="https://linkedin.com/in/vinay-jampana" target="_blank" rel="noopener noreferrer" className="hero-link">
-              LinkedIn
-            </a>
-            <a href="https://github.com/vinayjampana" target="_blank" rel="noopener noreferrer" className="hero-link">
-              GitHub
-            </a>
-            <a href="https://medium.com/@vinayjampana" target="_blank" rel="noopener noreferrer" className="hero-link">
-              Medium
-            </a>
-            {/* Place your resume at public/resume.pdf */}
-            <a href="/resume.pdf" download className="hero-cv-btn">
-              Download CV ↓
-            </a>
+            <a href={PROFILE.linkedin} target="_blank" rel="noopener noreferrer" className="hero-link">LinkedIn</a>
+            <a href={PROFILE.github} target="_blank" rel="noopener noreferrer" className="hero-link">GitHub</a>
+            <a href="/resume.pdf" download className="hero-cv-btn">Download CV ↓</a>
           </div>
         </div>
         <div className={`hero-avatar-wrap ${mounted ? 'hero-avatar-wrap--visible' : ''}`}>
-          {/* Drop your photo at public/photo.jpg to replace this avatar */}
           <div className="hero-avatar">
-            <img
-              src="/photo.jpg"
-              alt="Vinay Jampana"
-              className="hero-photo"
-              onError={e => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
-            />
-            <div className="hero-initials" style={{ display: 'none' }}>VJ</div>
+            <div className="hero-initials">VJ</div>
           </div>
           <div className="hero-avatar-ring" />
         </div>
       </div>
       <div className={`hero-stats ${mounted ? 'hero-stats--visible' : ''}`}>
-        <div className="hero-stat">
-          <span className="hero-stat-value">5+</span>
-          <span className="hero-stat-label">Years building SaaS</span>
-        </div>
-        <div className="hero-stat-div" />
-        <div className="hero-stat">
-          <span className="hero-stat-value">2,000+</span>
-          <span className="hero-stat-label">Realtime channels/account</span>
-        </div>
-        <div className="hero-stat-div" />
-        <div className="hero-stat">
-          <span className="hero-stat-value">15-30s</span>
-          <span className="hero-stat-value hero-stat-value--arrow">to</span>
-          <span className="hero-stat-value hero-stat-value--accent">1.5s</span>
-          <span className="hero-stat-label">Page Load</span>
-        </div>
-        <div className="hero-stat-div" />
-        <div className="hero-stat">
-          <span className="hero-stat-value">40+</span>
-          <span className="hero-stat-label">Component Library</span>
-        </div>
-        <div className="hero-stat-div" />
-        <div className="hero-stat">
-          <span className="hero-stat-value">40/40/20</span>
-          <span className="hero-stat-label">Frontend / Backend / GenAI</span>
-        </div>
+        {HERO_STATS.map(([value, label], i) => (
+          <React.Fragment key={label}>
+            {i > 0 && <div className="hero-stat-div" />}
+            <div className="hero-stat">
+              <span className="hero-stat-value">{value}</span>
+              <span className="hero-stat-label">{label}</span>
+            </div>
+          </React.Fragment>
+        ))}
       </div>
     </section>
   );
 }
 
-function SectionLabel({ number, children }) {
+function FocusCard({ area, index }) {
+  const [ref, inView] = useInView(0.1);
   return (
-    <div className="section-label">
-      <span className="section-label-num mono-label">{String(number).padStart(2, '0')}</span>
-      <span className="section-label-text">{children}</span>
+    <div
+      ref={ref}
+      className={`focus-card ${inView ? 'focus-card--visible' : ''}`}
+      style={{ transitionDelay: `${index * 90}ms` }}
+    >
+      <div className="focus-card-top">
+        <span className="focus-weight">{String(index + 1).padStart(2, '0')}</span>
+        <span className="focus-label mono-label">{area.label}</span>
+      </div>
+      <h3 className="focus-title">{area.title}</h3>
+      <p className="focus-copy">{area.copy}</p>
     </div>
+  );
+}
+
+function WorkCard({ study, index }) {
+  const [ref, inView] = useInView(0.08);
+  return (
+    <Link
+      to={`/work/${study.slug}`}
+      className={`work-card ${inView ? 'work-card--visible' : ''}`}
+      style={{ transitionDelay: `${(index % 2) * 80}ms` }}
+      ref={ref}
+    >
+      <div className="work-card-top">
+        <span className="project-highlight mono-label">{study.group}</span>
+        <span className="mono-label work-card-year">{study.year}</span>
+      </div>
+      <h3 className="work-card-title">{study.title}</h3>
+      <p className="work-card-summary">{study.summary}</p>
+      <div className="exp-tags">
+        {study.tags.map(t => <span key={t} className="tag">{t}</span>)}
+      </div>
+      <span className="work-card-cta mono-label">Read case study →</span>
+    </Link>
   );
 }
 
@@ -346,77 +253,35 @@ function ExperienceItem({ item, index }) {
         </div>
         <div className="exp-header-right">
           <span className="exp-period mono-label">{item.period}</span>
-          <span className="exp-location mono-label">{item.location}</span>
+          <span className="exp-location mono-label">{item.place}</span>
         </div>
       </div>
       <ul className="exp-bullets">
         {item.bullets.map((b, i) => (
-          <li key={i} className="exp-bullet">{b}</li>
+          <li key={i} className="exp-bullet">
+            {b.text}
+            {b.to && <> <Link to={b.to} className="exp-more">Case study →</Link></>}
+          </li>
         ))}
       </ul>
-      <div className="exp-tags">
-        {item.tags.map(t => <span key={t} className="tag">{t}</span>)}
-      </div>
     </div>
   );
 }
 
-function Experience() {
-  const [ref, inView] = useInView(0.05);
-  return (
-    <section id="experience" className="section" ref={ref}>
-      <div className={`section-header ${inView ? 'section-header--visible' : ''}`}>
-        <SectionLabel number={2}>Work Experience</SectionLabel>
-        <div className="section-rule" />
-      </div>
-      <div className="exp-list">
-        {EXPERIENCE.map((item, i) => (
-          <ExperienceItem key={item.company} item={item} index={i} />
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function FocusCard({ area, index }) {
+function Principle({ p, index }) {
   const [ref, inView] = useInView(0.1);
-  return (
-    <div
-      ref={ref}
-      className={`focus-card ${inView ? 'focus-card--visible' : ''}`}
-      style={{ transitionDelay: `${index * 90}ms` }}
-    >
-      <div className="focus-card-top">
-        // <span className="focus-weight">{area.weight}</span>
-        <span className="focus-label mono-label">{area.label}</span>
-      </div>
-      <h3 className="focus-title">{area.title}</h3>
-      <p className="focus-copy">{area.copy}</p>
-    </div>
+  const body = (
+    <>
+      <span className="principle-num mono-label">{String(index + 1).padStart(2, '0')}</span>
+      <h3 className="principle-title">{p.title}</h3>
+      <p className="principle-text">{p.text}</p>
+      {p.to && <span className="work-card-cta mono-label">See the example →</span>}
+    </>
   );
-}
-
-function Focus() {
-  const [ref, inView] = useInView(0.05);
-  return (
-    <section id="focus" className="section" ref={ref}>
-      <div className={`section-header ${inView ? 'section-header--visible' : ''}`}>
-        <SectionLabel number={1}>Engineering Focus</SectionLabel>
-        <div className="section-rule" />
-      </div>
-      <div className="focus-intro">
-        <p>
-          I position myself as a senior product engineer: strong frontend systems, real backend ownership,
-          and selective GenAI engineering for internal tools, ranking, scoring, and workflow acceleration.
-        </p>
-      </div>
-      <div className="focus-grid">
-        {FOCUS_AREAS.map((area, i) => (
-          <FocusCard key={area.label} area={area} index={i} />
-        ))}
-      </div>
-    </section>
-  );
+  const cls = `principle ${inView ? 'principle--visible' : ''}`;
+  return p.to
+    ? <Link to={p.to} className={cls} ref={ref}>{body}</Link>
+    : <div className={cls} ref={ref}>{body}</div>;
 }
 
 function ProjectCard({ project, index }) {
@@ -430,97 +295,58 @@ function ProjectCard({ project, index }) {
       <div className="project-card-top">
         <div>
           <div className="project-card-meta">
-            <div className="project-highlight mono-label">{project.highlight}</div>
-            {project.status && (
-              <span className={`project-status-badge project-status-badge--${project.status} mono-label`}>
-                {STATUS_LABEL[project.status]}
-              </span>
-            )}
+            <div className="project-highlight mono-label">{project.line}</div>
           </div>
           <h3 className="project-name">{project.name}</h3>
-          <p className="project-tagline">{project.tagline}</p>
         </div>
         <div className="project-links">
-          {project.links.live && (
-            <a href={project.links.live} target="_blank" rel="noopener noreferrer" className="project-link">
-              ↗ Live
+          {project.links.map(([label, href], i) => (
+            <a
+              key={label}
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`project-link ${i > 0 ? 'project-link--muted' : ''}`}
+            >
+              {i === 0 ? `↗ ${label}` : label}
             </a>
-          )}
-          {project.links.npm && (
-            <a href={project.links.npm} target="_blank" rel="noopener noreferrer" className="project-link">
-              ↗ npm
-            </a>
-          )}
-          {project.links.repo && (
-            <a href={project.links.repo} target="_blank" rel="noopener noreferrer" className="project-link project-link--muted">
-              GitHub
-            </a>
-          )}
+          ))}
         </div>
       </div>
-      <p className="project-desc">{project.description}</p>
-      <ul className="project-points">
-        {project.points.map((p, i) => (
-          <li key={i} className="project-point">{p}</li>
-        ))}
-      </ul>
+      <p className="project-desc">{project.text}</p>
       <div className="exp-tags">
-        {project.tags.map(t => <span key={t} className="tag">{t}</span>)}
+        {project.stack.split(', ').map(t => <span key={t} className="tag">{t}</span>)}
       </div>
     </div>
   );
 }
 
-function Projects() {
-  const [ref, inView] = useInView(0.05);
+function SkillGroup({ name, text, index, parentInView }) {
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    if (!parentInView) return;
+    const t = setTimeout(() => setVisible(true), index * 60);
+    return () => clearTimeout(t);
+  }, [parentInView, index]);
   return (
-    <section id="projects" className="section" ref={ref}>
-      <div className={`section-header ${inView ? 'section-header--visible' : ''}`}>
-        <SectionLabel number={3}>Selected Projects</SectionLabel>
-        <div className="section-rule" />
-      </div>
-      <div className="projects-grid">
-        {PROJECTS.map((p, i) => (
-          <ProjectCard key={p.name} project={p} index={i} />
-        ))}
-      </div>
-    </section>
+    <div className={`skill-group ${visible ? 'skill-group--visible' : ''}`}>
+      <h4 className="skill-category mono-label">{name}</h4>
+      <p className="skill-text">{text}</p>
+    </div>
   );
 }
 
-function ArticleCard({ article, index }) {
-  const [ref, inView] = useInView(0.1);
-  return (
-    <a
-      ref={ref}
-      href={article.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={`article-card ${inView ? 'article-card--visible' : ''}`}
-      style={{ transitionDelay: `${index * 80}ms` }}
-    >
-      <div className="article-card-top">
-        <span className="article-tag mono-label">{article.tag}</span>
-        <span className="article-meta mono-label">{article.date} · {article.readTime}</span>
-      </div>
-      <h3 className="article-title">{article.title}</h3>
-      <p className="article-excerpt">{article.excerpt}</p>
-      <span className="article-read-more mono-label">Read on Medium →</span>
-    </a>
-  );
-}
-
-function Articles() {
+function Skills() {
   const [ref, inView] = useInView(0.05);
   return (
-    <section id="articles" className="section" ref={ref}>
+    <section id="skills" className="section" ref={ref}>
       <div className={`section-header ${inView ? 'section-header--visible' : ''}`}>
-        <SectionLabel number={4}>Writing</SectionLabel>
+        <SectionLabel number={8}>Technical Skills</SectionLabel>
         <div className="section-rule" />
       </div>
-      <div className="articles-grid">
-        {ARTICLES.map((a, i) => (
-          <ArticleCard key={a.title} article={a} index={i} />
+      <div className="skills-grid">
+        {SKILLS.map(([name, text], i) => (
+          <SkillGroup key={name} name={name} text={text} index={i} parentInView={inView} />
         ))}
       </div>
     </section>
@@ -532,7 +358,7 @@ function Education() {
   return (
     <section id="education" className="section" ref={ref}>
       <div className={`section-header ${inView ? 'section-header--visible' : ''}`}>
-        <SectionLabel number={5}>Education</SectionLabel>
+        <SectionLabel number={9}>Education</SectionLabel>
         <div className="section-rule" />
       </div>
       <div className={`edu-card ${inView ? 'edu-card--visible' : ''}`}>
@@ -552,43 +378,170 @@ function Education() {
   );
 }
 
-function SkillGroup({ group, index, parentInView }) {
-  const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    if (!parentInView) return;
-    const t = setTimeout(() => setVisible(true), index * 60);
-    return () => clearTimeout(t);
-  }, [parentInView, index]);
+function Home() {
   return (
-    <div className={`skill-group ${visible ? 'skill-group--visible' : ''}`}>
-      <h4 className="skill-category mono-label">{group.category}</h4>
-      <div className="skill-items">
-        {group.core.map(item => (
-          <span key={item} className="skill-item skill-item--core">{item}</span>
-        ))}
-        <div className="skill-divider" />
-        {group.familiar.map(item => (
-          <span key={item} className="skill-item">{item}</span>
-        ))}
+    <>
+      <Hero />
+      <div className="sections-wrapper">
+        <Section
+          id="focus"
+          number={1}
+          label="Engineering Focus"
+          intro="I work where product, backend and AI meet: I take a business problem, decide the technical approach and where each piece should live, and stay with it through delivery and production."
+        >
+          <div className="focus-grid">
+            {FOCUS.map((area, i) => <FocusCard key={area.label} area={area} index={i} />)}
+          </div>
+        </Section>
+
+        <Section
+          id="work"
+          number={2}
+          label="Case Studies"
+          intro="Written from the code of systems I own at Zotok.ai. Each one covers the problem, the decision and the alternatives, what broke, and what I would change."
+        >
+          <div className="work-grid">
+            {CASE_STUDIES.map((cs, i) => <WorkCard key={cs.slug} study={cs} index={i} />)}
+          </div>
+        </Section>
+
+        <Section id="how" number={3} label="How I Work">
+          <div className="principle-grid">
+            {PRINCIPLES.map((p, i) => <Principle key={p.title} p={p} index={i} />)}
+          </div>
+        </Section>
+
+        <Section id="experience" number={4} label="Work Experience">
+          <div className="exp-list">
+            {EXPERIENCE.map((item, i) => <ExperienceItem key={item.company} item={item} index={i} />)}
+          </div>
+        </Section>
+
+        <Section
+          id="platform"
+          number={5}
+          label="Systems I Work Across"
+          intro="The product is a multi-tenant WhatsApp-commerce platform. Here is the map, and where my work sits on it."
+        >
+          <div className="platform">
+            {PLATFORM.map(([layer, what, mine]) => (
+              <div className="platform-row" key={layer}>
+                <span className="platform-layer mono-label">{layer}</span>
+                <span className="platform-what">{what}</span>
+                <span className="platform-mine">{mine}</span>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        <Section id="projects" number={6} label="Other Projects">
+          <div className="projects-grid">
+            {PROJECTS.map((p, i) => <ProjectCard key={p.name} project={p} index={i} />)}
+          </div>
+        </Section>
+
+        <Skills />
+        <Education />
       </div>
+    </>
+  );
+}
+
+/* ─── case study page ───────────────────────────────────── */
+
+function Block({ b }) {
+  if (typeof b === 'string') return <p>{inline(b)}</p>;
+  if (b.h) return <h3>{b.h}</h3>;
+  if (b.list) return <ul>{b.list.map((x, i) => <li key={i}>{inline(x)}</li>)}</ul>;
+  if (b.code) {
+    return (
+      <figure className="code">
+        <figcaption className="mono-label">{b.code.caption}</figcaption>
+        <pre><code>{b.code.text}</code></pre>
+      </figure>
+    );
+  }
+  if (b.pre) return <pre className="diagram">{b.pre}</pre>;
+  if (b.table) {
+    return (
+      <div className="table-wrap">
+        <table>
+          <thead><tr>{b.table.head.map((h, i) => <th key={i}>{h}</th>)}</tr></thead>
+          <tbody>
+            {b.table.rows.map((r, i) => (
+              <tr key={i}>{r.map((c, j) => <td key={j}>{c}</td>)}</tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  }
+  if (b.note) return <p className="case-note">{b.note}</p>;
+  return null;
+}
+
+function CaseStudy({ study }) {
+  const index = CASE_STUDIES.indexOf(study);
+  const next = CASE_STUDIES[index + 1];
+  const prev = CASE_STUDIES[index - 1];
+  return (
+    <div className="sections-wrapper">
+      <article className="case">
+        <p className="case-crumb"><Link to="/#work" className="mono-label">← All case studies</Link></p>
+        <div className="case-kicker">
+          <span className="project-highlight mono-label">{study.group}</span>
+          <span className="mono-label">{study.year}</span>
+        </div>
+        <h1 className="case-title">{study.title}</h1>
+        <p className="case-dek">{study.dek}</p>
+
+        <dl className="case-meta">
+          {study.meta.map(([k, v]) => (
+            <React.Fragment key={k}>
+              <dt className="mono-label">{k}</dt>
+              <dd>{v}</dd>
+            </React.Fragment>
+          ))}
+        </dl>
+
+        <div className="case-facts">
+          {study.facts.map(([n, label]) => (
+            <div className="case-fact" key={label}>
+              <span className="case-fact-value">{n}</span>
+              <span className="case-fact-label mono-label">{label}</span>
+            </div>
+          ))}
+        </div>
+
+        {study.sections.map((section, si) => (
+          <section className="case-section" key={section.title}>
+            <h2>
+              <span className="case-section-num mono-label">{String(si + 1).padStart(2, '0')}</span>
+              {section.title}
+            </h2>
+            {section.body.map((b, i) => <Block key={i} b={b} />)}
+          </section>
+        ))}
+
+        <p className="case-note">{CONFIDENTIAL_NOTE}</p>
+
+        <nav className="case-pager">
+          {prev ? <Link to={`/work/${prev.slug}`}><span className="mono-label">Previous</span>{prev.title}</Link> : <span />}
+          {next ? <Link to={`/work/${next.slug}`} className="case-pager-next"><span className="mono-label">Next</span>{next.title}</Link> : <span />}
+        </nav>
+      </article>
     </div>
   );
 }
 
-function Skills() {
-  const [ref, inView] = useInView(0.05);
+function NotFound() {
   return (
-    <section id="skills" className="section" ref={ref}>
-      <div className={`section-header ${inView ? 'section-header--visible' : ''}`}>
-        <SectionLabel number={6}>Technical Skills</SectionLabel>
-        <div className="section-rule" />
-      </div>
-      <div className="skills-grid">
-        {SKILLS.map((group, gi) => (
-          <SkillGroup key={group.category} group={group} index={gi} parentInView={inView} />
-        ))}
-      </div>
-    </section>
+    <div className="sections-wrapper">
+      <article className="case">
+        <h1 className="case-title">Page not found</h1>
+        <p className="case-dek"><Link to="/">Back to the home page</Link></p>
+      </article>
+    </div>
   );
 }
 
@@ -598,13 +551,13 @@ function Footer() {
       <div className="footer-inner">
         <div className="footer-left">
           <span className="footer-name">Vinay Jampana</span>
-          <span className="footer-status mono-label">Open to Senior Engineer / SDE2-SDE3 roles</span>
+          <span className="footer-status mono-label">Open to Senior AI / Full-Stack roles</span>
         </div>
         <div className="footer-links">
-          <a href="mailto:vinayvarma541@gmail.com" className="footer-link">vinayvarma541@gmail.com</a>
-          <a href="https://linkedin.com/in/vinay-jampana" target="_blank" rel="noopener noreferrer" className="footer-link">LinkedIn</a>
-          <a href="https://github.com/vinayjampana" target="_blank" rel="noopener noreferrer" className="footer-link">GitHub</a>
-          <a href="https://medium.com/@vinayjampana" target="_blank" rel="noopener noreferrer" className="footer-link">Medium</a>
+          <a href={`mailto:${PROFILE.email}`} className="footer-link">{PROFILE.email}</a>
+          <a href={PROFILE.linkedin} target="_blank" rel="noopener noreferrer" className="footer-link">LinkedIn</a>
+          <a href={PROFILE.github} target="_blank" rel="noopener noreferrer" className="footer-link">GitHub</a>
+          <a href="/resume.pdf" className="footer-link">Resume</a>
         </div>
       </div>
       <div className="footer-bottom">
@@ -615,21 +568,31 @@ function Footer() {
 }
 
 export default function App() {
+  const loc = useLocation();
+  const [path, hash] = loc.split('#');
+  const match = path.match(/^\/work\/([^/]+)$/);
+  const study = match && CASE_STUDIES.find(cs => cs.slug === match[1]);
+
+  useEffect(() => {
+    document.title = study ? `${study.title} - ${PROFILE.name}` : SITE_TITLE;
+  }, [study]);
+
+  useEffect(() => {
+    const el = hash && document.getElementById(hash);
+    if (el) el.scrollIntoView();
+    else window.scrollTo(0, 0);
+  }, [path, hash]);
+
+  let page;
+  if (path === '' || path === '/') page = <Home />;
+  else if (study) page = <CaseStudy study={study} />;
+  else page = <NotFound />;
+
   return (
     <div className="app">
       <div className="grain" aria-hidden="true" />
       <Nav />
-      <main>
-        <Hero />
-        <div className="sections-wrapper">
-          <Focus />
-          <Experience />
-          <Projects />
-          <Articles />
-          <Education />
-          <Skills />
-        </div>
-      </main>
+      <main>{page}</main>
       <Footer />
       <BackToTop />
     </div>
