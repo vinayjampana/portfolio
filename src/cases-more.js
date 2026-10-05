@@ -530,6 +530,9 @@ return required.every(p => granted.includes(p));` } },
     facts: [
       ['2.5 weeks', 'from start to live'],
       ['3', 'engineers'],
+      ['3,800+', 'pour cards captured since May 2026'],
+      ['1,900+', 'delivery challans (dispatches)'],
+      ['200+', 'projects'],
     ],
     sections: [
       {

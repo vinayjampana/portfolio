@@ -30,7 +30,7 @@ export const EXPERIENCE = [
     place: 'Hyderabad',
     note: 'B2B WhatsApp-commerce SaaS. Customers include Sun Pharma, UltraTech, ITC, Johnson & Johnson, Veeba and Samunnati.',
     bullets: [
-      { text: 'Led UltraTech\'s pour and dispatch workflow from offline forms to a WhatsApp flow end to end with a team of three, live in 2.5 weeks: agent tools, backend services and the delivery-challan web app.', to: '/work/rmc-dispatch-whatsapp' },
+      { text: 'Led UltraTech\'s pour and dispatch workflow from offline forms to a WhatsApp flow end to end with a team of three, live in 2.5 weeks: agent tools, backend services and the delivery-challan web app. More than 3,800 pour cards and 1,900 dispatches captured across 200+ projects since May.', to: '/work/rmc-dispatch-whatsapp' },
       { text: 'Own the architecture and delivery of the order-agent platform: one opaque LangGraph agent became seven testable steps composed on a visual canvas, running in production.', to: '/work/order-agent-platform' },
       { text: 'Built a rarity-weighted alias matcher over about 15,000 production aliases. Real rep phrasings matched to the right product first time went from 81% to 95%.', to: '/work/alias-ranker' },
       { text: 'Built the evaluation system for the order agent: 6 eval sets, 64 scenarios, graded against ground-truth SKUs, run twice a day in CI with a breach rule that alerts the team.', to: '/work/order-agent-evals' },
