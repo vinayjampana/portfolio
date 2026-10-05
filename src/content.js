@@ -16,8 +16,8 @@ export const PROFILE = {
   github: 'https://github.com/vinayjampana',
   title: 'Senior software engineer, AI and full-stack',
   intro: [
-    'With 5+ years building multi-tenant SaaS, I build and own products end to end: React and Next.js interfaces, NestJS services, and LLM agents together with the evaluation and observability they need to run in production.',
-    'I work at Zotok.ai in Hyderabad, where I own the architecture and delivery of a WhatsApp order-agent platform and lead a team of five engineers. Before that I spent several years on frontend systems, which is why I care about how the whole thing feels to the person using it.',
+    'With 5 years building multi-tenant SaaS, I build and own products end to end: React and Next.js interfaces, NestJS services, and LLM agents together with the evaluation and observability they need to run in production.',
+    'I work at Zotok.ai in Hyderabad, where I design and build a WhatsApp order-agent platform and the AI features around it. Before that I spent several years on frontend systems, which is why I care about how the whole thing feels to the person using it.',
   ],
   status: 'Open to senior full-stack and AI engineering roles. Hyderabad, Bangalore or remote.',
 };
@@ -28,10 +28,10 @@ export const EXPERIENCE = [
     role: 'Senior Software Engineer, AI and Full-Stack',
     period: 'May 2023 to present',
     place: 'Hyderabad',
-    note: 'B2B WhatsApp-commerce SaaS. Customers include Sun Pharma, UltraTech, ITC, Johnson & Johnson, Veeba and Samunnati.',
+    note: 'B2B WhatsApp-commerce platform. Stack: LangGraph, Python, TypeScript, NestJS, React, Next.js, PostgreSQL, OpenSearch, AWS.',
     bullets: [
-      { text: 'Led UltraTech\'s pour and dispatch workflow from offline forms to a WhatsApp flow end to end with a team of three, live in 2.5 weeks: agent tools, backend services and the delivery-challan web app. More than 3,800 pour cards and 1,900 dispatches captured across 200+ projects since May.', to: '/work/rmc-dispatch-whatsapp' },
-      { text: 'Own the architecture and delivery of the order-agent platform: one opaque LangGraph agent became seven testable steps composed on a visual canvas, running in production.', to: '/work/order-agent-platform' },
+      { text: 'Built a WhatsApp workflow that replaced a plant\'s offline pour and dispatch forms, live in 2.5 weeks: agent tools, backend services and the delivery-challan web app. More than 3,800 pour cards and 1,900 dispatches captured across 200+ projects since May.', to: '/work/rmc-dispatch-whatsapp' },
+      { text: 'Designed the order-agent platform: one opaque LangGraph agent became seven testable steps composed on a visual canvas, running in production.', to: '/work/order-agent-platform' },
       { text: 'Built a rarity-weighted alias matcher over about 15,000 production aliases. Real rep phrasings matched to the right product first time went from 81% to 95%.', to: '/work/alias-ranker' },
       { text: 'Built the evaluation system for the order agent: 6 eval sets, 64 scenarios, graded against ground-truth SKUs, run twice a day in CI with a breach rule that alerts the team.', to: '/work/order-agent-evals' },
       { text: 'Built OpenTelemetry-based Langfuse tracing and per-step trace capture, shown in the AI playground UI.', to: '/work/tracing-a-block-runtime' },
@@ -41,9 +41,8 @@ export const EXPERIENCE = [
       { text: 'Built dynamic WhatsApp template buttons resolved at send time, from the template builder to the landing page.', to: '/work/template-buttons' },
       { text: 'Built single-use OTP statement links on Next.js 15 SSR across a shortener, a gateway route and a sheet API; migrated the customer web app from webpack to Next.js 15 on AWS Amplify.', to: '/work/secure-statement-links' },
       { text: 'Drove the design of the two-layer access model (module access plus role permissions) and built its API.', to: '/work/access-control' },
-      { text: 'Led a frontend performance program on the monorepo: first load from 15 to 30 seconds to about 1.5 seconds through ten build, bundle and caching changes.', to: '/work/frontend-load-time' },
-      { text: 'Set up and maintain Module Federation remotes and their deploy workflows in a 19-app Nx monorepo; own the frontend of the real-time inbox.', to: '/work/micro-frontends' },
-      { text: 'Promoted to Lead within the first year. I lead a team of five engineers: I turn business requirements into technical approaches, review designs and pull requests, guide implementation, and own delivery and quality.' },
+      { text: 'Cut first load from 15 to 30 seconds to about 1.5 seconds through ten build, bundle and caching changes.', to: '/work/frontend-load-time' },
+      { text: 'Set up and maintain Module Federation remotes and their deploy workflows; built the frontend of the real-time inbox.', to: '/work/micro-frontends' },
     ],
   },
   {
@@ -696,9 +695,9 @@ export const FOCUS = [
     copy: 'Next.js and React interfaces, NestJS and Python services, gateway routes and queues. I own features across those boundaries, including the awkward seams: signed links, template contracts, single-use enforcement.',
   },
   {
-    label: 'Leadership and platform',
-    title: 'Leading a team of five, and the platform under it',
-    copy: 'I turn business requirements into technical approaches, decide where each piece should live, review designs and pull requests, and own delivery. Module Federation remotes and their deploy path, access control and CI are part of that.',
+    label: 'Reliability and platform',
+    title: 'The platform under the features',
+    copy: 'I decide where each piece should live and keep it observable and safe to change: Module Federation remotes and their deploy path, access control, CI, evals and tracing.',
   },
 ];
 
@@ -729,13 +728,13 @@ export const PRINCIPLES = [
     to: '/work/production-notes',
   },
   {
-    title: 'Leave the team better equipped',
-    text: 'I review my team\'s designs and pull requests, and write design docs, root-cause notes and handovers so work survives a change of owner.',
+    title: 'Leave work easy to take over',
+    text: 'I write design docs, root-cause notes and handovers so work survives a change of owner.',
   },
 ];
 
 export const PLATFORM = [
-  ['Frontend', 'Nx workspace with 19 apps. A seller host with seven Module Federation remotes; customer-facing Next.js 15 apps for secure links and customer hub.', 'Remotes, deploy paths, CI, real-time inbox, permission gating.'],
+  ['Frontend', 'Nx workspace with a seller host and seven Module Federation remotes; customer-facing Next.js 15 apps for secure links and customer hub.', 'Remotes, deploy paths, CI, real-time inbox, permission gating.'],
   ['Gateway', 'KrakenD routes in front of the services.', 'Added routes for module access, facets and the sheet connector.'],
   ['Bot platform', 'Message ingestion, queues and the flow engine (a Typebot fork) with a visual builder.', 'The Zo Flow block, outcome routing, error path, trace capture and save validation.'],
   ['AI runtime', 'zo-flow (typed function runtime), a Python LangGraph service, an OCR service.', 'Owner of the order pipeline, alias ranker, tracing and evals.'],
