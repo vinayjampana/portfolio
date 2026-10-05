@@ -466,8 +466,8 @@ return required.every(p => granted.includes(p));` } },
 
   // ------------------------------------------------------------------ 12
   {
-    slug: 'production-canary',
-    title: 'A canary that talks to the bot',
+    slug: 'production-health-check',
+    title: 'A health check that talks to the bot',
     dek: 'A scheduled check that behaves like a real user, and the design choices that keep it from crying wolf.',
     summary: 'Real login, real message, real reply, and alerts only when something breaks.',
     year: '2026',
@@ -483,7 +483,7 @@ return required.every(p => granted.includes(p));` } },
       {
         title: 'Why not just health endpoints',
         body: [
-          'Service health endpoints stay green while the product is broken. The failure I care about is a customer sending a message and getting nothing back. So the canary is the customer: it signs in, sends a message in the way a real one arrives, and waits for the bot\'s reply.',
+          'Service health endpoints stay green while the product is broken. The failure I care about is a customer sending a message and getting nothing back. So the health check is the customer: it signs in, sends a message in the way a real one arrives, and waits for the bot\'s reply.',
         ],
       },
       {
@@ -491,7 +491,7 @@ return required.every(p => granted.includes(p));` } },
         body: [
           { list: [
             'It checks that the WhatsApp session is connected, that the alert channel is reachable (an alert path that is broken is its own outage), and that the bot answers a greeting within a bounded poll.',
-            'The seller session is minted through the real OTP sign-in each run. A pasted token expires silently and turns the canary into a source of false alarms.',
+            'The seller session is minted through the real OTP sign-in each run. A pasted token expires silently and turns the health check into a source of false alarms.',
             'The reply check matches the menu\'s row titles as well as text, because the bot answers with an interactive list, not a sentence.',
             'Alerts fire on failure only, in an adaptive card with the time in IST and the failing assertion. Pass notifications train people to ignore the channel.',
             'It used to send the greeting twice per run. Fixing that removed a source of confusing double replies in the channel it tests.',
@@ -501,8 +501,8 @@ return required.every(p => granted.includes(p));` } },
       {
         title: 'When it earned its keep',
         body: [
-          'One night every check failed for about nine hours. The alert fired; the CI run still showed green, because the scheduler ran once per invocation and ignored its own exit code. The cause was a configuration difference in a day/night deployment swap (see the production notes), which no unit test or health endpoint would have caught, and which the canary caught within ten minutes of starting.',
-          'Two changes followed: the canary\'s exit code becomes the job\'s status, and the trigger moved out of the CI scheduler, which is best-effort at short intervals, to an external one.',
+          'One night every check failed for about nine hours. The alert fired; the CI run still showed green, because the scheduler ran once per invocation and ignored its own exit code. The cause was a configuration difference in a day/night deployment swap (see the production notes), which no unit test or health endpoint would have caught, and which the health check caught within ten minutes of starting.',
+          'Two changes followed: the health check\'s exit code becomes the job\'s status, and the trigger moved out of the CI scheduler, which is best-effort at short intervals, to an external one.',
         ],
       },
       {
@@ -524,7 +524,7 @@ return required.every(p => granted.includes(p));` } },
     meta: [
       ['Role', 'Led end to end'],
       ['Team', 'Three engineers'],
-      ['Scope', 'Backend services, agent tools, WhatsApp flow, web app, production canary'],
+      ['Scope', 'Backend services, agent tools, WhatsApp flow, web app, production health check'],
       ['Stack', 'TypeScript, NestJS, Python (LangGraph), Hasura, React, WhatsApp (WAHA)'],
     ],
     facts: [
@@ -567,7 +567,7 @@ return required.every(p => granted.includes(p));` } },
       {
         title: 'Keeping it working',
         body: [
-          'After launch I added an hourly canary that checks the WhatsApp session, sends a message to the bot as a real user would, and alerts the team on failure. It is described in the production canary study.',
+          'After launch I added an hourly health check that confirms the WhatsApp session is connected, sends a message to the bot as a real user would, and alerts the team on failure. It is described in the production health check study.',
         ],
       },
       {
@@ -578,7 +578,7 @@ return required.every(p => granted.includes(p));` } },
       },
       {
         title: 'Ownership',
-        body: [{ list: ['Led: scoping, the layer split, the cross-layer contracts, the delivery-challan flow, the duplicate-notification fix and the canary.'] }],
+        body: [{ list: ['Led: scoping, the layer split, the cross-layer contracts, the delivery-challan flow, the duplicate-notification fix and the health check.'] }],
       },
     ],
   },

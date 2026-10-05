@@ -37,7 +37,7 @@ export const EXPERIENCE = [
       { text: 'Built OpenTelemetry-based Langfuse tracing and per-step trace capture, shown in the AI playground UI.', to: '/work/tracing-a-block-runtime' },
       { text: 'Made order placement multi-location: one checkout per delivery address against a cart API that merges lines.', to: '/work/multi-location-orders' },
       { text: 'Found and fixed production bugs across services: a crash loop, duplicate WhatsApp sends, tenant-blind vector search, OCR failures.', to: '/work/production-notes' },
-      { text: 'Run a production canary that behaves like a real buyer and alerts on failure only.', to: '/work/production-canary' },
+      { text: 'Run a production health check that behaves like a real buyer and alerts on failure only.', to: '/work/production-health-check' },
       { text: 'Built dynamic WhatsApp template buttons resolved at send time, from the template builder to the landing page.', to: '/work/template-buttons' },
       { text: 'Built single-use OTP statement links on Next.js 15 SSR across a shortener, a gateway route and a sheet API; migrated the customer web app from webpack to Next.js 15 on AWS Amplify.', to: '/work/secure-statement-links' },
       { text: 'Drove the design of the two-layer access model (module access plus role permissions) and built its API.', to: '/work/access-control' },
@@ -647,7 +647,7 @@ const ORDER = [
   'frontend-load-time',
   'access-control',
   'production-notes',
-  'production-canary',
+  'production-health-check',
 ];
 
 // group label + tags shown on the cards
@@ -665,7 +665,7 @@ const CARD = {
   'micro-frontends': ['Frontend platform', ['Module Federation', 'Nx', 'GitHub Actions', 'CloudFront']],
   'access-control': ['Platform', ['NestJS', 'DynamoDB', 'RBAC', 'KrakenD', 'React']],
   'production-notes': ['Reliability', ['Node.js', 'OpenSearch', 'Hasura', 'OCR', 'AWS ECS']],
-  'production-canary': ['Reliability', ['Vitest', 'GitHub Actions', 'Teams', 'OTP']],
+  'production-health-check': ['Reliability', ['Vitest', 'GitHub Actions', 'Teams', 'OTP']],
 };
 
 export const CASE_STUDIES = ORDER.map(slug => {
@@ -742,5 +742,5 @@ export const PLATFORM = [
   ['Business services', 'Commerce, organisations, communication, custom entities. NestJS, TypeORM, Hasura.', 'Features and root-cause fixes across all four.'],
   ['Data', 'PostgreSQL, DynamoDB, OpenSearch.', 'Ranker queries, module-access table, kNN retrieval fix.'],
   ['Delivery', 'GitHub Actions, ECR and ECS, Amplify, Lambda, S3.', 'Deploy workflows, CI caching, runner fixes, hosted dashboards.'],
-  ['Quality', 'Sentinel: API tests, evals, a production canary.', 'Evals, CI gate, hosted dashboard, canary.'],
+  ['Quality', 'Sentinel: API tests, evals, a production health check.', 'Evals, CI gate, hosted dashboard, health check.'],
 ];
