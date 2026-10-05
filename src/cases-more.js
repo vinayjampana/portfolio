@@ -513,4 +513,132 @@ return required.every(p => granted.includes(p));` } },
       },
     ],
   },
+
+  // ------------------------------------------------------------------ 13
+  {
+    slug: 'rmc-dispatch-whatsapp',
+    title: 'Moving a plant\'s pour and dispatch paperwork onto WhatsApp in 2.5 weeks',
+    dek: 'Pour details and dispatch notes lived on offline forms. I led a team of three that replaced them with a WhatsApp flow, a small web app and event-driven notifications.',
+    summary: 'Offline forms became a WhatsApp flow with a delivery-challan web app, live in two and a half weeks.',
+    year: '2026',
+    meta: [
+      ['Role', 'Led end to end'],
+      ['Team', 'Three engineers'],
+      ['Scope', 'Backend services, agent tools, WhatsApp flow, web app, production canary'],
+      ['Stack', 'TypeScript, NestJS, Python (LangGraph), Hasura, React, WhatsApp (WAHA)'],
+    ],
+    facts: [
+      ['2.5 weeks', 'from start to live'],
+      ['3', 'engineers'],
+    ],
+    sections: [
+      {
+        title: 'The problem',
+        body: [
+          'A ready-mix concrete (RMC) plant records each pour and each dispatch on paper-style forms that are filled in offline and keyed in later. Details arrive late, get lost, and nobody downstream can see where a load is.',
+          'The constraint was friction. The people on site already live in WhatsApp, so the goal was a flow they could use without learning a new tool.',
+        ],
+      },
+      {
+        title: 'The shape of the solution',
+        body: [
+          { list: [
+            'A WhatsApp flow creates pour cards and dispatch notes through agent tools, so the conversation is the form.',
+            'A small web app handles what a chat is bad at: sign-in with a one-time code, and the delivery-challan details that need to be reviewed and submitted.',
+            'Backend services own the pour-card and delivery-challan records, and Hasura events trigger the notifications back into the WhatsApp group.',
+          ] },
+          'I split the work so each engineer owned a layer, and I took the parts that cross layers: the contract between the agent, the database events and the web form. Most of the schedule risk lived in those seams, not inside any one layer.',
+        ],
+      },
+      {
+        title: 'What went wrong',
+        body: [
+          'One dispatch note was sent twice for a single challan. The cause was not a retry. A real second submit had reached the database: the agent saves a challan as approved straight away, the link in the chat opened a form that still let someone submit an already-approved record, and Hasura fires on every update. The notification handler checked the new status but never the old one.',
+          'I proved it from the raw event, which showed the old and new status both "approved", and from the access log, which showed two identical update calls twenty-seven seconds apart from the same browser.',
+          { list: [
+            'Backend: the handler now notifies only on a real transition (or an insert).',
+            'Frontend: an approved challan opens in its submitted state, the submit is gated, and a double click is guarded.',
+          ] },
+        ],
+      },
+      {
+        title: 'Keeping it working',
+        body: [
+          'After launch I added an hourly canary that checks the WhatsApp session, sends a message to the bot as a real user would, and alerts the team on failure. It is described in the production canary study.',
+        ],
+      },
+      {
+        title: 'What I would change',
+        body: [
+          'Make the status model explicit (draft, then approved) instead of saving as approved, and put an idempotency key on the notification so the handler cannot send twice whatever the database does.',
+        ],
+      },
+      {
+        title: 'Ownership',
+        body: [{ list: ['Led: scoping, the layer split, the cross-layer contracts, the delivery-challan flow, the duplicate-notification fix and the canary.'] }],
+      },
+    ],
+  },
+
+  // ------------------------------------------------------------------ 14
+  {
+    slug: 'frontend-load-time',
+    title: 'From a 15 to 30 second first load to about 1.5 seconds',
+    dek: 'No single trick did it. Ten changes, in order of impact, across the build, the bundle, the startup path and the cache.',
+    summary: 'Ten build and runtime changes cut the first load of a 19-app Nx monorepo to about 1.5 seconds.',
+    year: '2026',
+    meta: [
+      ['Role', 'Led the effort'],
+      ['Duration', 'About six weeks of incremental work'],
+      ['Scope', 'Webpack build, Module Federation, app startup, caching'],
+      ['Stack', 'React, Nx, Webpack 5, Module Federation, S3 and CDN'],
+    ],
+    facts: [
+      ['15 to 30 s', 'first load before'],
+      ['~1.5 s', 'first load after'],
+      ['30 to 40%', 'faster builds from removing React Native alone'],
+    ],
+    sections: [
+      {
+        title: 'The problem',
+        body: [
+          'Two pains with one root. Developers waited on slow local startup and high memory use when running several apps. Users waited 15 to 30 seconds for the first screen. We set a target of about a second and a half and worked toward it in layers.',
+        ],
+      },
+      {
+        title: 'What changed, in order',
+        body: [
+          { table: { head: ['Change', 'Why it mattered'], rows: [
+            ['Removed React Native and its libraries', 'It had been in the codebase since an early idea of sharing code with mobile. Every build compiled mobile libraries the web never used. Usages became web equivalents or webpack-level mocks. Builds got 30 to 40% faster.'],
+            ['Replaced the Nx webpack wrapper with a custom executor on plain webpack', 'The wrapper silently absorbed custom optimisation config. Things looked applied and were not.'],
+            ['Built QA and production in production mode', 'Both were shipping mode development: readable code and webpack development wrappers around every component.'],
+            ['Source maps only in local and QA', 'Production was carrying large map files.'],
+            ['Lazy-loaded every route and every remote app', 'The first load fetched code for pages the user had not opened.'],
+            ['Split vendor chunks', 'React, MUI and the router rarely change, so the browser keeps them across deploys.'],
+            ['Deferred non-critical startup', 'PubNub, Firebase, i18n, Mixpanel, Intercom and session tracking moved after first render. The app no longer waits on them to paint.'],
+            ['Memoised the PubNub instance', 'It was being recreated on every parent re-render.'],
+            ['Two-tier caching', 'Hashed JS and CSS are cached for good; index.html is never cached, so a deploy is picked up on the next load.'],
+            ['Singleton shared dependencies in Module Federation', 'One copy of the store, PubNub and i18n across all remotes.'],
+          ] } },
+        ],
+      },
+      {
+        title: 'Why this order',
+        body: [
+          'The first three changes were about trusting the toolchain: removing weight that should never have been there, and making sure the optimisation settings I changed were the ones actually applied. Only then did lazy loading and chunking pay off. Doing them first would have been tuning a build that was not the build we thought we had.',
+        ],
+      },
+      {
+        title: 'What I would change',
+        body: [
+          'I would have put a bundle budget in CI at the start, so each of the ten steps showed up as a number and the gain could not creep back. That is the same idea as my vite-plugin-bundle-size-tracker, which I built for exactly this reason.',
+        ],
+      },
+      {
+        title: 'Ownership',
+        body: [{ list: ['Led: the target, the sequencing of the ten changes, the review and the rollout across the monorepo.'] }],
+      },
+    ],
+  },
+
 ];
