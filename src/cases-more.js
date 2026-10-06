@@ -51,7 +51,7 @@ buyer opens the link ---> Next.js SSR page
           { list: [
             'A gateway route that accepts a buyer\'s token (not a platform user\'s), then validates that this buyer belongs to the seller workspace named in the query before forwarding. The sheet API then loads that seller\'s connector credentials through its own dependency.',
             'The sheet tab is identified by its numeric gid, not its name. A seller renaming the tab used to break every link; the API resolves gid to name when it builds the range.',
-            'Single use is a policy of the whole journey, not of the first request. That distinction caused most of the bugs below.',
+            'Single use has to hold for the whole journey, not only for the first request. Most of the bugs below came from missing this.',
           ] },
         ],
       },
@@ -118,7 +118,7 @@ resolved link (what the buyer receives):
           { list: [
             'Both the tab\'s gid and its name go out. The gid survives a rename; the name is what the sheets API takes in range notation.',
             'The name segments are percent-encoded by the builder, because a name may contain the "/" the placeholder is split on.',
-            'A half-made selection (no template chosen yet) is left unresolved rather than sent as a link that 404s. A link to nowhere is worse than none.',
+            'A half-made selection (no template chosen yet) is left unresolved rather than sent as a link that 404s. A link that gives a 404 is worse than no link.',
           ] },
           'The behaviour is pinned by tests that assert the contract from both ends: what the builder writes, what the resolver returns, that survey-form placeholders still work, and that an incomplete selection resolves to nothing.',
         ],
@@ -329,7 +329,7 @@ const getHostUrl = (hostOrUrl) => {
     ],
     sections: [
       {
-        title: 'Two questions, kept apart',
+        title: 'Two separate questions',
         body: [
           'Access control at a multi-tenant product answers two different questions. Which parts of the product has this workspace been given (a commercial decision made by a super admin)? And within those, what may this particular person do (an operational decision made by the workspace)? Mixing them produces roles named "Sales with Reports but not Schemes", one per customer.',
           { pre:
@@ -457,7 +457,7 @@ return required.every(p => granted.includes(p));` } },
       {
         title: 'What I take from it',
         body: [
-          'Read the data before building the feature. A two-hour replay would have told me the same thing before the endpoint, the migration and the scoring code existed. The stop was the right call; the order of work was the mistake.',
+          'Read the data before building the feature. A two-hour replay would have told me the same thing before the endpoint, the migration and the scoring code existed. Stopping was the right call. The mistake was the order of work.',
           'It also matters that the code stays inert. The flag is off, the endpoint is additive, and the branch documents exactly what to re-check (rep history volume) before anyone resumes.',
         ],
       },
@@ -549,7 +549,7 @@ return required.every(p => granted.includes(p));` } },
             'A small web app handles what a chat is bad at: sign-in with a one-time code, and the delivery-challan details that need to be reviewed and submitted.',
             'Backend services own the pour-card and delivery-challan records, and Hasura events trigger the notifications back into the WhatsApp group.',
           ] },
-          'We split the work by layer, and I took the parts that cross layers: the contract between the agent, the database events and the web form. Most of the schedule risk lived in those seams, not inside any one layer.',
+          'We split the work by layer, and I took the parts that cross layers: the contract between the agent, the database events and the web form. Most of the risk was in the joins between the layers, not inside any one layer.',
         ],
       },
       {
@@ -604,7 +604,7 @@ return required.every(p => granted.includes(p));` } },
       {
         title: 'The problem',
         body: [
-          'Two pains with one root. Developers waited on slow local startup and high memory use when running several apps. Users waited 15 to 30 seconds for the first screen. We set a target of about a second and a half and worked toward it in layers.',
+          'Two problems, one cause. Developers waited on slow local startup and high memory use when running several apps. Users waited 15 to 30 seconds for the first screen. We set a target of about a second and a half and worked toward it in layers.',
         ],
       },
       {
@@ -627,7 +627,7 @@ return required.every(p => granted.includes(p));` } },
       {
         title: 'Why this order',
         body: [
-          'The first three changes were about trusting the toolchain: removing weight that should never have been there, and making sure the optimisation settings I changed were the ones actually applied. Only then did lazy loading and chunking pay off. Doing them first would have been tuning a build that was not the build we thought we had.',
+          'The first three changes were about trusting the toolchain: removing weight that should never have been there, and making sure the optimisation settings I changed were the ones actually applied. Only then did lazy loading and chunking pay off. Doing it the other way would have meant tuning a build that was not the build we thought we had.',
         ],
       },
       {

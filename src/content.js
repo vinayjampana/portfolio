@@ -34,7 +34,7 @@ export const EXPERIENCE = [
       { text: 'Designed the order-agent platform: one large LangGraph agent was split into seven testable steps on a visual canvas, now running in production.', to: '/work/order-agent-platform' },
       { text: 'Built a matching engine over about 15,000 production aliases. Correct first match on real rep messages improved from 81% to 95%.', to: '/work/alias-ranker' },
       { text: 'Built the evaluation setup for the order agent: 6 eval sets, 64 scenarios checked against the correct SKUs, run twice a day in CI, with an alert when the score drops.', to: '/work/order-agent-evals' },
-      { text: 'Added OpenTelemetry-based Langfuse tracing with per-step capture, shown in the AI playground.', to: '/work/tracing-a-block-runtime' },
+      { text: 'Added Langfuse tracing to the flow runtime, with per-step capture shown in the AI playground.' },
       { text: 'Made order placement work for multiple delivery locations: one checkout per address, since the cart API merges same-product lines.', to: '/work/multi-location-orders' },
       { text: 'Found and fixed production issues across services: a crash loop, duplicate WhatsApp messages, search results mixing across customers, and OCR failures.', to: '/work/production-notes' },
       { text: 'Run a production health check every 10 minutes that chats with the bot like a real buyer and alerts only on failure.', to: '/work/production-health-check' },
@@ -124,7 +124,7 @@ const BASE_CASE_STUDIES = [
         title: 'The problem',
         body: [
           'Distributors send orders on WhatsApp as free text and as photos of handwritten sheets: "2 tiffin sector 44, 1 sector 18", "choco syrup 5cs". The order agent turns that into a validated cart.',
-          'It started as one LangGraph agent in Python, and that caused two problems. Every customer wanted slightly different behaviour (ask or auto-pick when a product is ambiguous, which review link to send, how quantities are read), and each change meant editing Python and redeploying. And when an order went wrong there was no seam to test, trace or intervene at: the whole pipeline ran inside one node.',
+          'It started as one LangGraph agent in Python, and that caused two problems. Every customer wanted slightly different behaviour (ask or auto-pick when a product is ambiguous, which review link to send, how quantities are read), and each change meant editing Python and redeploying. And when an order went wrong there was no place to test, trace or step in: the whole pipeline ran inside one node.',
         ],
       },
       {
@@ -145,7 +145,7 @@ resolveQuantities ....... model
 manageCart .............. plain code (cart + checkout)
       |
 formatOrderResponse ..... model writes the body, the button is deterministic` },
-          'I weighed three shapes. Keeping the Python agent and adding per-workspace config would have moved the problem, not removed it. A free-running tool-calling agent would be the most flexible, but a model choosing between catalog and cart calls on every order is exactly the variance I was trying to remove. Pinned steps with explicit outcomes kept the flexibility that customers actually asked for (reordering, branching, per-customer rules) at the level where a solution author can see it.',
+          'I weighed three shapes. Keeping the Python agent and adding per-workspace config would have moved the problem, not removed it. A free-running tool-calling agent would be the most flexible, but a model choosing between catalog and cart calls on every order is the variance I wanted to remove. Fixed steps with clear outcomes gave the flexibility customers actually asked for (reordering, branching, per-customer rules), at a level where a solution author can see and change it.',
           'I shipped an intermediate version first: one Agent block that exposed the nine functions as tools and drew six outcome connectors. It worked, but it still hid the pipeline behind a single node. The next iteration replaced it with a generic block that runs one function per node.',
         ],
       },
@@ -191,7 +191,7 @@ return { outgoingEdgeId: resolveOutcomeEdgeId(block, outcome) };` } },
       {
         title: 'The builder side',
         body: [
-          'A platform is only as good as the authoring experience, so the builder changed too:',
+          'The builder also needed changes, because a platform is useful only if authors can work with it easily:',
           {
             list: [
               'The settings panel shows what each function returns (`{{cart.summary}}`, `{{cart.order_id}}`), and the canvas shows which variable a block produces, so data flow is visible without reading code.',
@@ -397,7 +397,7 @@ dashboard: hosted UI shows latest run, trend, per-item result, Run button` },
     ]
   }
 }` } },
-          'A line passes only if the right SKU is in the cart at the exact quantity in pieces (a "case" is quantity times pack size), there are no unmapped lines, and there are no extra SKUs. No model grades the output. That costs partial credit, and buys a score that means one thing.',
+          'A line passes only if the right SKU is in the cart at the exact quantity in pieces (a "case" is quantity times pack size), there are no unmapped lines, and there are no extra SKUs. No model grades the output. There is no partial credit, but the score has one clear meaning.',
         ],
       },
       {
@@ -430,7 +430,7 @@ dashboard: hosted UI shows latest run, trend, per-item result, Run button` },
         title: 'What went wrong',
         body: [
           { list: [
-            'The first run on one eval scored 0%: the live canvas was sending empty strings where the function expected arrays, so every call was rejected. The eval was correct and the system was not, which is the point of having it.',
+            'The first run on one eval scored 0%: the live canvas was sending empty strings where the function expected arrays, so every call was rejected. The eval was right and the system was wrong, which is exactly what an eval is for.',
             'An eval can run ahead of production. If the check encodes a fix that is not deployed yet, it goes falsely green or falsely red. I now deploy the fix before merging the scheduled check.',
             'The report publisher silently added nothing: the reports branch was a copy of main whose ignore file excluded the reports folder. A test against a real repository found it; the publisher now force-adds that folder.',
           ] },
@@ -455,97 +455,6 @@ dashboard: hosted UI shows latest run, trend, per-item result, Run button` },
   },
 
   // ------------------------------------------------------------------ 4
-  {
-    slug: 'tracing-a-block-runtime',
-    title: 'Tracing a runtime where every block is a separate HTTP call',
-    dek: 'OpenTelemetry-based Langfuse tracing for a workflow engine, where there is no single long-running agent to instrument.',
-    summary: 'Fixed trace IDs, a separate tracer provider, tracing that never breaks a request, and two bugs that were silently dropping every span.',
-    year: '2026',
-    meta: [
-      ['Role', 'Designed and built'],
-      ['Scope', 'Tracing for the function runtime, correlated with request logs'],
-      ['Stack', 'TypeScript, OpenTelemetry, Langfuse v5, NestJS, pnpm'],
-    ],
-    facts: [
-      ['1 trace', 'per conversation turn, however many blocks run'],
-      ['Fail-open', 'a tracing fault cannot fail a customer turn'],
-      ['2', 'dependency-resolution bugs that silently dropped every span'],
-    ],
-    sections: [
-      {
-        title: 'The problem',
-        body: [
-          'Failed order turns vanished. Debugging meant searching logs across services. The usual answer, a Langfuse callback on one LangGraph run, did not fit: the canvas drives everything through separate HTTP calls, one block per call, and the LangGraph thread path had almost no traffic.',
-        ],
-      },
-      {
-        title: 'Design',
-        body: [
-          { list: [
-            'One span per block, opened where the block is invoked. Model generations inside the block nest under it through ambient OpenTelemetry context, so nothing has to be passed down.',
-            'Blocks in one turn are separate requests, so they need a shared trace. The trace ID is derived deterministically from the request ID, and every block attaches to a synthetic parent span with that trace ID. All the blocks of a turn become siblings in one trace.',
-            'Session is the conversation thread and user is the workspace, so conversations group naturally.',
-            'An isolated tracer provider, not the global one, so it coexists with the APM agent already in the process.',
-            'Off by default, and every function is fail-open. A tracing fault must never fail a customer turn.',
-          ] },
-          { code: { caption: 'Block span wrapper (simplified)', text:
-`export const runBlockSpan = async (options, fn) => {
-  const ready = await ensureInitialized();
-  if (!ready) return fn();                       // tracing off or broken: run untraced
-
-  let traceId;
-  try {
-    traceId = await createTraceId(options.requestId);   // same request -> same trace
-  } catch (error) {
-    log.warn('span.setup-failed', { reason: 'this block will run untraced' });
-    return fn();                                  // setup failure only, fn has not started
-  }
-
-  // fn() runs from here down. Its error is the caller's error: nothing below
-  // may catch and fall back to running fn() a second time.
-  return propagateAttributes(
-    { userId: options.workspaceId, sessionId: options.threadId },
-    () => startActiveObservation(options.name, async span => {
-      span.update({ input: options.input });
-      try {
-        const result = await fn();
-        span.update({ output: result });
-        return result;
-      } catch (error) {
-        span.update({ level: 'ERROR', statusMessage: String(error) });
-        throw error;
-      }
-    }, { parentSpanContext: { traceId, spanId: SYNTHETIC_PARENT_SPAN_ID, traceFlags: 1 } })
-  );
-};` } },
-          'The trace ID is also written onto every log line for that block, so a log found by request ID gives the trace to open, and a trace can be turned back into a log query.',
-        ],
-      },
-      {
-        title: 'What went wrong',
-        body: [
-          { list: [
-            'An earlier version wrapped the whole span lifecycle, including the function, in one try/catch that fell back to running the function untraced on any error. That silently ran every failing function twice. It never showed up in happy-path tests, only once something actually threw. The comment above is the scar.',
-            'A bare tracer provider does not set up async context propagation like the full SDK does. Without an explicit context manager, every observation landed as an unrelated root trace. I reproduced this locally before adding it.',
-            'After migrating to the OpenTelemetry-based SDK, spans were "processed" but never left the process. The exporter peer-resolved to an old version pinned by other apps in the same pnpm workspace, and a second peer dependency collided the same way. I proved it by patching the HTTP client and seeing zero network calls, then fixed it with an aliased exporter and a scoped override. A clean-room install had hidden both bugs, so I now verify against the real bundled output.',
-          ] },
-        ],
-      },
-      {
-        title: 'What I would change',
-        body: [
-          'Add sampling and prompt redaction before enabling it broadly, attribute cost per span, and link traces to eval runs so a failing eval item opens its own trace.',
-        ],
-      },
-      {
-        title: 'Ownership',
-        body: [
-          { list: ['Built: everything described above, including the pnpm fixes and the log correlation.'] },
-        ],
-      },
-    ],
-  },
-
   // ------------------------------------------------------------------ 5
   {
     slug: 'production-notes',
@@ -637,7 +546,6 @@ const ORDER = [
   'rmc-dispatch-whatsapp',
   'alias-ranker',
   'order-agent-evals',
-  'tracing-a-block-runtime',
   'rep-mapping-history',
   'secure-statement-links',
   'template-buttons',
@@ -654,7 +562,6 @@ const CARD = {
   'order-agent-platform': ['AI systems', ['LangGraph', 'TypeScript', 'NestJS', 'Zod', 'Flow builder']],
   'alias-ranker': ['AI systems', ['Retrieval', 'PostgreSQL', 'Benchmarking', 'TypeScript']],
   'order-agent-evals': ['AI systems', ['LLM evaluation', 'GitHub Actions', 'AWS Amplify', 'S3']],
-  'tracing-a-block-runtime': ['AI systems', ['OpenTelemetry', 'Langfuse', 'pnpm', 'NestJS']],
   'rep-mapping-history': ['AI systems', ['Data analysis', 'PostgreSQL', 'Feature flags']],
   'secure-statement-links': ['Full-stack', ['Next.js 15', 'OTP', 'FastAPI', 'AWS Lambda', 'KrakenD']],
   'template-buttons': ['Full-stack', ['React', 'NestJS', 'WhatsApp templates', 'Jest']],
@@ -677,7 +584,7 @@ export const CONFIDENTIAL_NOTE = CONFIDENTIAL;
 export const HERO_STATS = [
   ['LangGraph', 'LLM agents and tool calling'],
   ['OpenSearch', 'Retrieval and kNN search'],
-  ['OpenTelemetry', 'Tracing and LLM evals'],
+  ['Langfuse', 'Tracing and LLM evals'],
   ['NestJS', 'Node, Python, PostgreSQL'],
   ['Next.js', 'React and TypeScript'],
   ['AWS', 'ECS, Lambda, Amplify'],
@@ -737,7 +644,7 @@ export const PLATFORM = [
   ['Frontend', 'Nx workspace with a seller host and seven Module Federation remotes; customer-facing Next.js 15 apps for secure links and customer hub.', 'Remotes, deploy paths, CI, real-time inbox, permission gating.'],
   ['Gateway', 'KrakenD routes in front of the services.', 'Added routes for module access, facets and the sheet connector.'],
   ['Bot platform', 'Message ingestion, queues and the flow engine (a Typebot fork) with a visual builder.', 'The Zo Flow block, outcome routing, error path, trace capture and save validation.'],
-  ['AI runtime', 'zo-flow (typed function runtime), a Python LangGraph service, an OCR service.', 'Owner of the order pipeline, alias ranker, tracing and evals.'],
+  ['AI runtime', 'zo-flow (typed function runtime), a Python LangGraph service, an OCR service.', 'Owner of the order pipeline, matching engine and evals; added Langfuse tracing.'],
   ['Business services', 'Commerce, organisations, communication, custom entities. NestJS, TypeORM, Hasura.', 'Features and root-cause fixes across all four.'],
   ['Data', 'PostgreSQL, DynamoDB, OpenSearch.', 'Ranker queries, module-access table, kNN retrieval fix.'],
   ['Delivery', 'GitHub Actions, ECR and ECS, Amplify, Lambda, S3.', 'Deploy workflows, CI caching, runner fixes, hosted dashboards.'],
