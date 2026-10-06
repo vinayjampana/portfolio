@@ -508,7 +508,7 @@ return required.every(p => granted.includes(p));` } },
       {
         title: 'What I would change',
         body: [
-          'Several canaries per flow (order, payment, catalogue) rather than one greeting, a status page fed by the same results, and an on-call route that pages after two consecutive failures instead of alerting a shared channel on the first.',
+          'Several checks per flow (order, payment, catalogue) rather than one greeting, a status page fed by the same results, and an on-call route that pages after two consecutive failures instead of alerting a shared channel on the first.',
         ],
       },
     ],
@@ -528,8 +528,7 @@ return required.every(p => granted.includes(p));` } },
       ['Stack', 'TypeScript, NestJS, Python (LangGraph), Hasura, React, WhatsApp (WAHA)'],
     ],
     facts: [
-      ['2.5 weeks', 'from start to live'],
-      ['3', 'engineers'],
+            ['3', 'engineers'],
       ['3,800+', 'pour cards captured since May 2026'],
       ['1,900+', 'delivery challans (dispatches)'],
       ['200+', 'projects'],
@@ -567,7 +566,7 @@ return required.every(p => granted.includes(p));` } },
       {
         title: 'Keeping it working',
         body: [
-          'After launch I added an hourly health check that confirms the WhatsApp session is connected, sends a message to the bot as a real user would, and alerts the team on failure. It is described in the production health check study.',
+          'After launch I added a health check, running every ten minutes, that confirms the WhatsApp session is connected, sends a message to the bot as a real user would, and alerts the team on failure. It is described in the production health check study.',
         ],
       },
       {
@@ -639,7 +638,7 @@ return required.every(p => granted.includes(p));` } },
       },
       {
         title: 'Ownership',
-        body: [{ list: ['Led: the target, the sequencing of the ten changes, the review and the rollout across the monorepo.'] }],
+        body: [{ list: ['Drove: the target, the sequencing of the ten changes, the review and the rollout across the monorepo.'] }],
       },
     ],
   },

@@ -37,7 +37,7 @@ export const EXPERIENCE = [
       { text: 'Added OpenTelemetry-based Langfuse tracing with per-step capture, shown in the AI playground.', to: '/work/tracing-a-block-runtime' },
       { text: 'Made order placement work for multiple delivery locations: one checkout per address, since the cart API merges same-product lines.', to: '/work/multi-location-orders' },
       { text: 'Found and fixed production issues across services: a crash loop, duplicate WhatsApp messages, search results mixing across customers, and OCR failures.', to: '/work/production-notes' },
-      { text: 'Run an hourly production health check that chats with the bot like a real buyer and alerts only on failure.', to: '/work/production-health-check' },
+      { text: 'Run a production health check every 10 minutes that chats with the bot like a real buyer and alerts only on failure.', to: '/work/production-health-check' },
       { text: 'Built dynamic WhatsApp template buttons that are resolved at send time, from the template builder to the landing page.', to: '/work/template-buttons' },
       { text: 'Built single-use OTP statement links on Next.js 15 SSR using a URL shortener, a gateway route and a sheet API; migrated the customer web app from webpack to Next.js 15 on AWS Amplify.', to: '/work/secure-statement-links' },
       { text: 'Designed the two-layer access model (module access plus role permissions) and built its API.', to: '/work/access-control' },
