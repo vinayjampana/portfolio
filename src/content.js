@@ -16,8 +16,8 @@ export const PROFILE = {
   github: 'https://github.com/vinayjampana',
   title: 'Senior software engineer, AI and full-stack',
   intro: [
-    'With 5 years building multi-tenant SaaS, I build and own products end to end: React and Next.js interfaces, NestJS services, and LLM agents together with the evaluation and observability they need to run in production.',
-    'I work at Zotok.ai in Hyderabad, where I design and build a WhatsApp order-agent platform and the AI features around it. Before that I spent several years on frontend systems, which is why I care about how the whole thing feels to the person using it.',
+    'I have 5 years of experience building multi-tenant SaaS, working on products end to end: React and Next.js frontends, NestJS services, and LLM agents along with the evaluation and monitoring they need in production.',
+    'I work at Zotok.ai in Hyderabad, where I design and build a WhatsApp order-agent platform and the AI features around it. Earlier I spent several years on frontend systems, so I care about how the whole product feels to the user.',
   ],
   status: 'Open to senior full-stack and AI engineering roles. Hyderabad, Bangalore or remote.',
 };
@@ -30,18 +30,18 @@ export const EXPERIENCE = [
     place: 'Hyderabad',
     note: 'B2B WhatsApp-commerce platform. Stack: LangGraph, Python, TypeScript, NestJS, React, Next.js, PostgreSQL, OpenSearch, AWS.',
     bullets: [
-      { text: 'Built a WhatsApp workflow that replaced a plant\'s offline pour and dispatch forms, live in 2.5 weeks: agent tools, backend services and the delivery-challan web app. More than 3,800 pour cards and 1,900 dispatches captured across 200+ projects since May.', to: '/work/rmc-dispatch-whatsapp' },
-      { text: 'Designed the order-agent platform: one opaque LangGraph agent became seven testable steps composed on a visual canvas, running in production.', to: '/work/order-agent-platform' },
-      { text: 'Built a rarity-weighted alias matcher over about 15,000 production aliases. Real rep phrasings matched to the right product first time went from 81% to 95%.', to: '/work/alias-ranker' },
-      { text: 'Built the evaluation system for the order agent: 6 eval sets, 64 scenarios, graded against ground-truth SKUs, run twice a day in CI with a breach rule that alerts the team.', to: '/work/order-agent-evals' },
-      { text: 'Built OpenTelemetry-based Langfuse tracing and per-step trace capture, shown in the AI playground UI.', to: '/work/tracing-a-block-runtime' },
-      { text: 'Made order placement multi-location: one checkout per delivery address against a cart API that merges lines.', to: '/work/multi-location-orders' },
-      { text: 'Found and fixed production bugs across services: a crash loop, duplicate WhatsApp sends, tenant-blind vector search, OCR failures.', to: '/work/production-notes' },
-      { text: 'Run a production health check that behaves like a real buyer and alerts on failure only.', to: '/work/production-health-check' },
-      { text: 'Built dynamic WhatsApp template buttons resolved at send time, from the template builder to the landing page.', to: '/work/template-buttons' },
-      { text: 'Built single-use OTP statement links on Next.js 15 SSR across a shortener, a gateway route and a sheet API; migrated the customer web app from webpack to Next.js 15 on AWS Amplify.', to: '/work/secure-statement-links' },
-      { text: 'Drove the design of the two-layer access model (module access plus role permissions) and built its API.', to: '/work/access-control' },
-      { text: 'Cut first load from 15 to 30 seconds to about 1.5 seconds through ten build, bundle and caching changes.', to: '/work/frontend-load-time' },
+      { text: 'Built a WhatsApp workflow that replaced a plant\'s offline pour and dispatch forms, with agent tools, backend services and a delivery-challan web app. Over 3,800 pour cards and 1,900 dispatches captured across 200+ projects since May.', to: '/work/rmc-dispatch-whatsapp' },
+      { text: 'Designed the order-agent platform: one large LangGraph agent was split into seven testable steps on a visual canvas, now running in production.', to: '/work/order-agent-platform' },
+      { text: 'Built a matching engine over about 15,000 production aliases. Correct first match on real rep messages improved from 81% to 95%.', to: '/work/alias-ranker' },
+      { text: 'Built the evaluation setup for the order agent: 6 eval sets, 64 scenarios checked against the correct SKUs, run twice a day in CI, with an alert when the score drops.', to: '/work/order-agent-evals' },
+      { text: 'Added OpenTelemetry-based Langfuse tracing with per-step capture, shown in the AI playground.', to: '/work/tracing-a-block-runtime' },
+      { text: 'Made order placement work for multiple delivery locations: one checkout per address, since the cart API merges same-product lines.', to: '/work/multi-location-orders' },
+      { text: 'Found and fixed production issues across services: a crash loop, duplicate WhatsApp messages, search results mixing across customers, and OCR failures.', to: '/work/production-notes' },
+      { text: 'Run an hourly production health check that chats with the bot like a real buyer and alerts only on failure.', to: '/work/production-health-check' },
+      { text: 'Built dynamic WhatsApp template buttons that are resolved at send time, from the template builder to the landing page.', to: '/work/template-buttons' },
+      { text: 'Built single-use OTP statement links on Next.js 15 SSR using a URL shortener, a gateway route and a sheet API; migrated the customer web app from webpack to Next.js 15 on AWS Amplify.', to: '/work/secure-statement-links' },
+      { text: 'Designed the two-layer access model (module access plus role permissions) and built its API.', to: '/work/access-control' },
+      { text: 'Cut first load from 15-30 seconds to about 1.5 seconds with ten build, bundle and caching changes.', to: '/work/frontend-load-time' },
       { text: 'Set up and maintain Module Federation remotes and their deploy workflows; built the frontend of the real-time inbox.', to: '/work/micro-frontends' },
     ],
   },
@@ -105,9 +105,9 @@ const BASE_CASE_STUDIES = [
   // ------------------------------------------------------------------ 1
   {
     slug: 'order-agent-platform',
-    title: 'Turning an order-taking agent into a pipeline that authors can compose',
-    dek: 'A monolithic LangGraph agent became seven typed steps on a visual canvas, with explicit outcomes, an error path, and a trace for every step.',
-    summary: 'Seven typed steps, per-outcome routing, an error edge and per-step traces, from builder UI to function runtime.',
+    title: 'Turning an order-taking agent into a pipeline that can be composed',
+    dek: 'A single large LangGraph agent became seven typed steps on a visual canvas, with clear outcomes, an error path and a trace for every step.',
+    summary: 'Seven typed steps, outcome-based routing, an error edge and per-step traces, from the builder UI to the function runtime.',
     year: '2026',
     meta: [
       ['Role', 'Owned architecture and delivery'],
@@ -236,9 +236,9 @@ return { outgoingEdgeId: resolveOutcomeEdgeId(block, outcome) };` } },
   // ------------------------------------------------------------------ 2
   {
     slug: 'alias-ranker',
-    title: 'Fixing product matching without adding a single alias',
-    dek: 'A rarity-weighted matcher over the aliases a workspace already had. Real rep phrasings matched to the right product first time went from 48 to 56 of 59, with no new data and no new infrastructure.',
-    summary: 'Matching rep shorthand to the right product over 15,000 known aliases: 81% to 95% of real phrasings right first time.',
+    title: 'Improving product matching without adding any alias',
+    dek: 'A matcher that gives more weight to rare words, built over the aliases a workspace already had. Real rep messages matched correctly first time went from 48 to 56 of 59, with no new data and no new infrastructure.',
+    summary: 'Matching rep shorthand to the right product over 15,000 known aliases: 81% to 95% of real messages correct first time.',
     year: '2026',
     meta: [
       ['Role', 'Designed the memory; built the ranker, benchmark and rollout'],
@@ -347,9 +347,9 @@ function tokenMatchScore(query, alias) {
   // ------------------------------------------------------------------ 3
   {
     slug: 'order-agent-evals',
-    title: 'An evaluation suite that cannot flatter you',
-    dek: 'Deterministic, end-to-end evals for a WhatsApp order agent, run twice a day in CI, gated on score, errors and completion.',
-    summary: 'Six eval sets, 64 scenarios, graded per line against ground-truth SKUs, with a breach rule and a hosted dashboard.',
+    title: 'An evaluation setup that gives honest scores',
+    dek: 'Deterministic end-to-end evals for a WhatsApp order agent, run twice a day in CI, with checks on score, errors and completion.',
+    summary: 'Six eval sets and 64 scenarios checked per line against the correct SKUs, with a breach rule and a hosted dashboard.',
     year: '2026',
     meta: [
       ['Role', 'Designed and built'],
@@ -457,9 +457,9 @@ dashboard: hosted UI shows latest run, trend, per-item result, Run button` },
   // ------------------------------------------------------------------ 4
   {
     slug: 'tracing-a-block-runtime',
-    title: 'Tracing a runtime where every block is its own HTTP call',
-    dek: 'OpenTelemetry-based Langfuse tracing for a workflow engine where there is no single long-lived agent run to instrument.',
-    summary: 'Deterministic trace IDs, an isolated tracer provider, fail-open behaviour, and two bugs that silently dropped every span.',
+    title: 'Tracing a runtime where every block is a separate HTTP call',
+    dek: 'OpenTelemetry-based Langfuse tracing for a workflow engine, where there is no single long-running agent to instrument.',
+    summary: 'Fixed trace IDs, a separate tracer provider, tracing that never breaks a request, and two bugs that were silently dropping every span.',
     year: '2026',
     meta: [
       ['Role', 'Designed and built'],
@@ -550,8 +550,8 @@ dashboard: hosted UI shows latest run, trend, per-item result, Run button` },
   {
     slug: 'production-notes',
     title: 'Production bugs worth writing down',
-    dek: 'Six root-cause write-ups: what looked wrong, what was wrong, and what I changed.',
-    summary: 'A crash loop, duplicate sends, tenant-blind vector search, OCR that never saw the image, a 4x latency cut, and an overnight outage.',
+    dek: 'Six root-cause write-ups: what looked wrong, what was actually wrong, and what I changed.',
+    summary: 'A crash loop, duplicate messages, search results mixing across customers, OCR that never saw the image, a 4x latency cut, and an overnight outage.',
     year: '2026',
     meta: [
       ['Role', 'Diagnosed and fixed (the overnight outage: diagnosed)'],
@@ -686,35 +686,35 @@ export const HERO_STATS = [
 export const FOCUS = [
   {
     label: 'AI systems',
-    title: 'Agents that are tested, traced and safe to change',
-    copy: 'I decide where the model belongs and where plain code does, then build the parts around it: typed steps with explicit outcomes, retrieval that is benchmarked, evals gated in CI, and traces that make a failed turn debuggable.',
+    title: 'Agents that are tested, monitored and easy to change',
+    copy: 'I decide where the model is needed and where plain code is enough, and then build the parts around it: steps with clear outcomes, retrieval that is measured, evals running in CI, and traces that make a failed conversation easy to debug.',
   },
   {
     label: 'Full-stack product',
-    title: 'From the button a buyer taps to the row in the database',
-    copy: 'Next.js and React interfaces, NestJS and Python services, gateway routes and queues. I own features across those boundaries, including the awkward seams: signed links, template contracts, single-use enforcement.',
+    title: 'From the button the buyer taps to the row in the database',
+    copy: 'Next.js and React interfaces, NestJS and Python services, gateway routes and queues. I own features across these layers, including the tricky parts in between: signed links, template contracts and single-use links.',
   },
   {
     label: 'Reliability and platform',
     title: 'The platform under the features',
-    copy: 'I decide where each piece should live and keep it observable and safe to change: Module Federation remotes and their deploy path, access control, CI, evals and tracing.',
+    copy: 'I decide where each piece should live and keep it observable and easy to change: Module Federation remotes and their deployment, access control, CI, evals and tracing.',
   },
 ];
 
 export const PRINCIPLES = [
   {
     title: 'Start from the business problem',
-    text: 'The order pipeline exists because every customer wanted slightly different ordering behaviour. I wrote down what each step needed to decide before choosing a framework.',
+    text: 'The order pipeline exists because every customer wanted slightly different ordering behaviour. Before choosing a framework, I wrote down what each step has to decide.',
     to: '/work/order-agent-platform',
   },
   {
     title: 'Decide where logic lives',
-    text: 'Tolerate blank lists in the platform, not in every customer\'s canvas. Keep a delivery place in order notes, not the shipping address. Put the dedupe guard at the source of the event.',
+    text: 'Handle blank lists in the platform, not in every customer\'s canvas. Keep the delivery place in order notes, not the shipping address. Put the duplicate check at the source of the event.',
     to: '/work/multi-location-orders',
   },
   {
     title: 'Measure before and after',
-    text: 'Share of real phrasings matched first time, latency per order line, eval scores with a breach rule. Where the sample is small I say so.',
+    text: 'Share of real phrasings matched correctly first time, latency per order line, eval scores with a breach rule. Where the sample is small, I say so.',
     to: '/work/alias-ranker',
   },
   {
@@ -724,12 +724,12 @@ export const PRINCIPLES = [
   },
   {
     title: 'Debug across boundaries',
-    text: 'A crash loop from a shared library, two environments that differed for the wrong reason, an outage that only appeared at night. The fix is usually a level above where the symptom is.',
+    text: 'A crash loop from a shared library, two environments that differed for no good reason, an outage that appeared only at night. The real cause is usually one level above where the symptom shows.',
     to: '/work/production-notes',
   },
   {
     title: 'Leave work easy to take over',
-    text: 'I write design docs, root-cause notes and handovers so work survives a change of owner.',
+    text: 'I write design docs, root-cause notes and handovers, so that the work continues smoothly even when the owner changes.',
   },
 ];
 

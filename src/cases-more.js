@@ -5,8 +5,8 @@ export const MORE_CASE_STUDIES = [
   {
     slug: 'secure-statement-links',
     title: 'A single-use link that shows a buyer their balance',
-    dek: 'A Google Sheet, a short link, an OTP and a server-rendered page: how a sensitive number gets to the right person once, across a web app, a shortener and two APIs.',
-    summary: 'Next.js SSR, OTP, single-use enforcement, and the bugs at the seams between four services.',
+    dek: 'A Google Sheet, a short link, an OTP and a server-rendered page: how a sensitive number reaches the right person only once, across a web app, a URL shortener and two APIs.',
+    summary: 'Next.js SSR, OTP, single-use enforcement, and the bugs between four services.',
     year: '2026',
     meta: [
       ['Role', 'Built end to end'],
@@ -83,8 +83,8 @@ buyer opens the link ---> Next.js SSR page
   // ------------------------------------------------------------------ 7
   {
     slug: 'template-buttons',
-    title: 'Buttons that resolve at send time',
-    dek: 'WhatsApp templates only let a URL button carry one variable. I made five kinds of dynamic button work through one resolver, from the template builder to the landing page.',
+    title: 'Buttons that are resolved at send time',
+    dek: 'WhatsApp templates allow only one variable in a URL button. I made five kinds of dynamic buttons work through one resolver, from the template builder to the landing page.',
     summary: 'A placeholder contract between the template builder, the send pipeline and the landing app.',
     year: '2026',
     meta: [
@@ -157,8 +157,8 @@ resolved link (what the buyer receives):
   {
     slug: 'multi-location-orders',
     title: 'One product, three delivery addresses',
-    dek: 'A buyer sends "2 for sector 44, 1 for sector 18". The cart API merges same-product lines, so getting three orders out took a deliberate sequence.',
-    summary: 'Sequenced submit and checkout per location, and the decisions about where each piece of information belongs.',
+    dek: 'A buyer sends "2 for sector 44, 1 for sector 18". The cart API merges same-product lines, so getting three separate orders needed a deliberate sequence.',
+    summary: 'Submit and checkout one by one for each location, and the decisions on where each piece of information belongs.',
     year: '2026',
     meta: [
       ['Role', 'Built'],
@@ -231,7 +231,7 @@ resolved link (what the buyer receives):
   {
     slug: 'micro-frontends',
     title: 'Module Federation across an Nx monorepo',
-    dek: 'One host, seven independently deployed remotes, five shared singletons, and a deploy script that keeps the host pointing at fresh remote entries.',
+    dek: 'One host, seven separately deployed remotes, five shared singletons, and a deploy script that keeps the host pointing to the latest remote entries.',
     summary: 'The host and remote shape, the shared-singleton choices, and the deploy path.',
     year: '2023 to 2026',
     meta: [
@@ -415,9 +415,9 @@ return required.every(p => granted.includes(p));` } },
   // ------------------------------------------------------------------ 11
   {
     slug: 'rep-mapping-history',
-    title: 'Built it, measured it, paused it',
-    dek: 'A feature that used a sales rep\'s past orders as evidence for product matching. The data said it would not pay off yet.',
-    summary: 'How replaying production history turned a half-built feature into a deliberate stop.',
+    title: 'Built it, measured it, and stopped',
+    dek: 'A feature that used a sales rep\'s past orders as evidence for product matching. The data showed it would not pay off yet.',
+    summary: 'How replaying production history led to a deliberate decision to stop a half-built feature.',
     year: '2026',
     meta: [
       ['Role', 'Built the prototype; made the call to pause'],
@@ -468,7 +468,7 @@ return required.every(p => granted.includes(p));` } },
   {
     slug: 'production-health-check',
     title: 'A health check that talks to the bot',
-    dek: 'A scheduled check that behaves like a real user, and the design choices that keep it from crying wolf.',
+    dek: 'A scheduled check that behaves like a real user, and the design choices that stop it from raising false alarms.',
     summary: 'Real login, real message, real reply, and alerts only when something breaks.',
     year: '2026',
     meta: [
@@ -517,9 +517,9 @@ return required.every(p => granted.includes(p));` } },
   // ------------------------------------------------------------------ 13
   {
     slug: 'rmc-dispatch-whatsapp',
-    title: 'Moving a plant\'s pour and dispatch paperwork onto WhatsApp in 2.5 weeks',
-    dek: 'Pour details and dispatch notes lived on offline forms. Three of us replaced them with a WhatsApp flow, a small web app and event-driven notifications.',
-    summary: 'Offline forms became a WhatsApp flow with a delivery-challan web app, live in two and a half weeks.',
+    title: 'Moving a plant\'s pour and dispatch paperwork onto WhatsApp',
+    dek: 'Pour details and dispatch notes lived on offline forms. Three of us replaced them with a WhatsApp flow, a small web app and event-based notifications.',
+    summary: 'Offline forms became a WhatsApp flow with a delivery-challan web app.',
     year: '2026',
     meta: [
       ['Role', 'Built end to end'],
@@ -586,7 +586,7 @@ return required.every(p => granted.includes(p));` } },
   // ------------------------------------------------------------------ 14
   {
     slug: 'frontend-load-time',
-    title: 'From a 15 to 30 second first load to about 1.5 seconds',
+    title: 'From a 15-30 second first load to about 1.5 seconds',
     dek: 'No single trick did it. Ten changes, in order of impact, across the build, the bundle, the startup path and the cache.',
     summary: 'Ten build and runtime changes cut the first load of an Nx monorepo to about 1.5 seconds.',
     year: '2026',
